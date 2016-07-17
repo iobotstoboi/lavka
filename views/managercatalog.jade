@@ -1,0 +1,90 @@
+extends managerlayout
+block seotitle
+    title= 'Панель управления | Лавка'
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content 
+    .content-wrapper
+        // Content Header (Page header)
+        section.content-header
+          h1.pull-left
+            | Супертовары
+          a.btn.btn-primary(style="margin-left: 15px" data-toggle="modal" data-target="#myModal") Добавить
+          ol.breadcrumb
+            li
+              a(href='#')
+                i.fa.fa-dashboard
+                |  Home
+            li.active Dashboard
+        // Main content
+        section.content
+          .row.maincontent
+            .products
+                .product
+                    - console.log (Object.keys(product).length)
+                    - for (var x = 0; x < Object.keys(product).length; x++)
+                        .card.col-md-2
+                            span.delete(data-productId=product[x]._id) ×
+                            img(src=product[x].previewImg class="img-responsive")
+                            h4=product[x].name
+        .alerts
+
+        script(type='text/javascript').
+            $(function() { 
+            $('.delete').on('click', function() {
+            var card = $(this).parent();
+            var productId = $(this).data("productid");
+            console.log(productId);
+            $('.alerts').html('<div class="alert alert-danger "><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Вы действительно хотите удалить элемент? <a class="btn btn-danger" id="delete-confirm">Удалить</a></div>');
+            $('#delete-confirm').on('click', function() {
+            // $.post( "/manager/super", { productId: productId, oper: "delete" })
+            $.ajax({
+            type: 'POST',
+            url: "/manager/super",
+            data: { productId: productId, oper: "delete" },
+            success: function() {
+            card.fadeOut();
+            $('.alert-danger').alert('close')
+            }
+            });
+            });
+            });
+            $('#formAdd').on('submit', function() {
+            var formData = $(this).serializeArray();
+            var productId = formData[0].value
+            var type = formData[1].value
+            var enddate = formData[2].value
+            console.log(formData);
+            $.ajax({
+            type: 'POST',
+            url: "/manager/super",
+            data: { productId: productId, type: type, enddate: enddate, oper: "addnew" },
+            success: function() {
+                console.log('Added');
+                window.location = "/manager/super"
+            }
+            });
+            return false;
+            })
+            });
+        #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel')
+          .modal-dialog(role='document')
+            form#formAdd
+                .modal-content
+                  .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                      span(aria-hidden='true') ×
+                    h4#myModalLabel.modal-title Добавить супертовар
+                  .modal-body
+                      .form-group
+                        label ID товара
+                        input.form-control(type='text', placeholder='ID товара' name="prodid")
+                      input.form-control(value='super', type='hidden' name="type")
+                      .form-group
+                        label Дата окончания
+                        input.form-control(type='date' name="enddate")
+                  .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
+                    button.btn.btn-primary(type='submit') Добавить
+                        
+
+                    

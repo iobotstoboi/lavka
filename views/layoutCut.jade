@@ -1,0 +1,11 @@
+doctype html
+html(lang='en')
+    head
+        include ./chunks/head.jade
+    body
+        .container
+            include ./chunks/headerCut.jade
+            block content
+            include ./chunks/footer.jade
+        include ./chunks/authmodal.jade
+        include ./chunks/js.jade

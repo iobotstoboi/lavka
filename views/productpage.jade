@@ -1,0 +1,301 @@
+extends layout
+block seotitle
+    title= 'Лавка. ' + currentProduct.name
+    meta(name="description", content=currentProduct.description.substr(0, 200))
+    meta(name="keywords", content=currentCategory.name + "Лавка, "+currentProduct.name+", handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+    link(rel="image_src", href=""+currentProduct.gallery)
+    meta(content=""+currentProduct.gallery, property="og:image")
+block content
+    .alert.alert-info.alert-dismissible.alert-favoutite(role='alert')
+                button.close(type='button', data-dismiss='alert')
+                    span(aria-hidden='true') ×
+                    span.sr-only Close
+                strong Товар добавлен в избранное
+    .alert.alert-info.alert-dismissible.alert-cart(role='alert')
+                button.close(type='button', data-dismiss='alert')
+                    span(aria-hidden='true') ×
+                    span.sr-only Close
+                strong 
+    .row.maincontent
+        .col-md-12.headerOnProductPage
+            h3
+                - if (currentCategory.url) { var url = currentCategory.url} else {var url = "/category-" + currentCategory._id}
+                a(href=url)= currentCategory.name
+                .workshopOnProductPage(style="float:right;")
+                    if (typeof(currentWorkshop.img40) !== 'undefined')
+                        .master-avatar(style="background-image:url('" + currentWorkshop.img40 + "'), url('assets/images/avatar.jpg');")
+                    else
+                        .master-avatar(style="background-image:url('" + currentWorkshop.workshopLogo + "'), url('assets/images/avatar.jpg');")
+                    p
+                        span(style="color:rgb(255,150,150);font-size: 18px;")= 'Мастерская: '
+                        a(href='/workshop-' + currentWorkshop._id)= currentWorkshop.name
+                    p
+                        span=currentWorkshop.adres
+        .col-md-6.col-lg-6.col-sm-6.sidebar.text-right
+            - var imagelink;
+            - if (currentProduct.gallery.substr(0,2) == '..') { imagelink = currentProduct.gallery.substr(2);} else {imagelink = currentProduct.gallery;}
+            img(src='' + imagelink ,alt=currentProduct.name,title=currentProduct.name, style="width:100%; ")
+        .col-md-6.col-lg-6.col-sm-6.productInfoMain
+            h3= currentProduct.name
+                - var parsdprice=parseInt( currentProduct.price.replace(/\s+/g, ''))
+                if (isNaN(parsdprice))
+                    .noprice(style="float: right;")
+                        | цена
+                        br
+                        | не указана
+                else
+                    span.price= parsdprice
+                        i.fa.fa-rub.valuta
+            - if (currentProduct.available != undefined)
+                - if (currentProduct.available < 1)
+                    p= 'В наличии: под заказ'
+                - else
+                    p= 'В наличии: ' + currentProduct.available
+            .rateit(data-rateit-value=currentProduct.rating, data-rateit-ispreset="true")
+            .productInfoMainButtons
+                button.btn.btn-lg.btn-danger(style="margin-right:10px;", data-toggle="modal" data-target="#orderProductModal")
+                    strong(style="text-shadow:1px 1px 3px black;") Заказать
+                .modal.fade#orderProductModal(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
+                    .modal-dialog
+                        .modal-content
+                            .modal-header
+                                button.close(type="button", data-dismiss="modal")
+                                    span(aria-hidden="true") &times;
+                                    span.sr-only Закрыть
+                                h4.modal-title#myModalLabel Заказ изделия
+                            .modal-body
+                                if (user !== null)
+                                    .row
+                                        .col-md-6.col-sm-6.col-xs-6.col-lg-6
+                                            img(src=' ' + currentProduct.gallery ,alt=currentProduct.name,title=currentProduct.name, style="width:100%; ", onError="this.onerror=null;this.src='assets/images/tovar.png';")
+                                            p
+                                                strong= currentProduct.name
+                                        .col-md-6.col-sm-6.col-xs-6.col-lg-6
+                                            p
+                                                strong= user.get('firstName') + ' ' + user.get('secondName') + ', '
+                                                | от Вашего имени будет отправлен заказ в мастерскую
+                                                strong= ' ' + currentWorkshop.name
+                                                | .&nbsp;
+                                            p После получения заказа с Вами свяжутся сотрудники мастерской.
+                                            form(role="form", method="POST", action="/add-order-existing-user", name="addorder-form")
+                                                input(type="hidden",name="userid", value=""+user.get('_id'))
+                                                input(type="hidden", name="productid", value=""+ currentProduct._id)
+                                                .form-group
+                                                    textarea.form-control(style="resize:none;", name="comment", placeholder="Введите комментарий к заказу")
+                                                p.text-right
+                                                    button.btn.btn-lg.btn-success(type="submit")
+                                                        strong Заказать
+                                else
+                                    .row
+                                        .col-md-6.col-sm-6.col-xs-6.col-lg-6
+                                            img(src=' ' + currentProduct.gallery, alt=currentProduct.name, title=currentProduct.name, style="width:100%; ", onError="this.onerror=null;this.src='assets/images/tovar.png';")
+                                            p
+                                                strong= currentProduct.name
+                                        .col-md-6.col-sm-6.col-xs-6.col-lg-6
+                                            p Для совершения заказа вам необходимо
+                                                a(href='', data-toggle='modal', data-target='#authModal')
+                                                    i(style="color:rgb(250,190,190);")= " авторизоваться "
+                                                | или заполнить форму ниже
+                                            p(style="line-height:14px; font-size:13px; color:rgb(240,230,230)")
+                                                i Мастерской потребуются Ваши контактные данные для обратной связи с Вами.
+                                            form(role="form", method="POST", action="/add-order-new-user", name="addorder-form")
+                                                input(type="hidden", name="productid", value=""+ currentProduct._id)
+                                                .form-group#newUserFirstNameInput
+                                                    label(for='firstNameInput') Ваше имя
+                                                        span.notValidMessage Укажите Ваше имя
+                                                    input#firstNameInput.form-control(type='text', name='firstNameInput', placeholder='Введите ваше имя')
+                                                .form-group#newUserSecondNameInput
+                                                    label(for='secondNameInput') Ваша фамилия
+                                                        span.notValidMessage Укажите Вашу Фамилию
+                                                    input#secondNameInput.form-control(type='text', name='secondNameInput', placeholder='Введите вашу фамилию')
+                                                .form-group#newUserEmailInput
+                                                    label(for='emailInput') Email
+                                                        span.tooltipster(data-tooltip="Этот email Вы будете использовать в дальнейшем для авторизации на сайте") &nbsp;<i class="fa fa-question-circle"></i>
+                                                        span.notValidMessage Укажите Ваш email
+                                                    input#emailInput.form-control(type='email', name='emailInput', placeholder='Введите email')
+                                                .form-group
+                                                    label(for='phoneInput') Контактный телефон
+                                                        span.tooltipster(data-tooltip="Ваш телефон потребуется только для связи мастерской с Вами, и не будет использоваться в других целях") &nbsp;<i class="fa fa-question-circle"></i>
+                                                    input#emailInput.form-control(type='phone', name='phoneInput', placeholder='Введите номер телефона')
+                                                .form-group#newUserPasswordInput
+                                                    label(for='passwordInput') Пароль
+                                                        span.tooltipster(data-tooltip="Этот пароль Вы будете использовать в дальнейшем для авторизации на сайте") &nbsp;<i class="fa fa-question-circle"></i>
+                                                        span.notValidMessage Укажите пароль
+                                                    input#passwordInput.form-control(type='password', name='passwordInput', placeholder='Password')
+                                                .checkbox(style="color: white;border-top: 1px solid rgba(192, 192, 192, 0.23);padding-top: 5px;border-bottom: 1px solid rgba(192, 192, 192, 0.17);padding-bottom: 5px;")
+                                                    label
+                                                        input#termsOfUseInput(type='checkbox', name='termsOfUseInput')
+                                                        | Принимаю условия сервиса
+                                                .form-group
+                                                    textarea.form-control(style="resize:none;", name="comment", placeholder="Введите комментарий к заказу")
+                                                p.text-right
+                                                    button#orderAndCreateUserButton.btn.btn-lg.btn-success(type="submit")
+                                                        strong Заказать
+                - if (user)                                        
+                    button.btn.btn-lg.btn-info.toFavorite(style="")
+                        strong(style="text-shadow:1px 1px 3px black;") В избранное
+                    input#favUserId(type="hidden" value=user.get('id'))
+                
+                input#favId(type="hidden" value=currentProduct._id)    
+                button.btn.btn-lg.btn-info.toCart(style="margin-left:10px;")
+                    strong(style="text-shadow:1px 1px 3px black;") В корзину
+            .rating(style="font-size:8px; margin-bottom:20px; display:inline-block;")
+            if (currentProduct.description)
+                p(style="min-height:150px;")=currentProduct.description
+            else
+                p(style="min-height:150px;") Описание товара не задано
+            - if (currentProduct.views) {var views = currentProduct.views} else {var views = 0}
+            p.text-right= 'Просмотров: ' + views
+            .socials(style="font-size:8px; display:inline-block; float:right;")
+                span#vkbtn
+                //i.fa.fa-vk
+                i.fa.fa-twitter
+                i.fa.fa-tumblr-square
+                i.fa.fa-instagram
+                i.fa.fa-google-plus-square
+                i.fa.fa-facebook-square
+    .row
+        .col-md-12
+            p &nbsp;
+block customjs
+    script(type='text/javascript').
+        //===========================================
+        // Добавление нового пользователя и мастерской
+        $('#orderAndCreateUserButton').on('click', function(){
+        var valid=true;
+
+
+        // Емайл пользователя
+        if ($('#newUserEmailInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserEmailInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserFirstNameInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserFirstNameInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserSecondNameInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserSecondNameInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserPasswordInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserPasswordInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Смотрим что получилось по итогу
+            if (valid) {
+
+            } else {
+                return false;
+            }
+        });
+
+        // Убираем предупреждение с поля если пользователь его изменил
+        $('#newUserEmailInput input').on('change', function(){
+            $('#newUserEmailInput').removeClass('notvalid');
+        })
+        $('#newUserFirstNameInput input').on('change', function(){
+            $('#newUserFirstNameInput').removeClass('notvalid');
+        })
+        $('#newUserSecondNameInput input').on('change', function(){
+            $('#newUserSecondNameInput').removeClass('notvalid');
+        })
+        $('#newUserPasswordInput input').on('change', function(){
+            $('#newUserPasswordInput').removeClass('notvalid');
+        })
+        $('.toFavorite').on('click', function() {
+            $.ajax({
+                type: 'POST',
+                url: "/addfavourite",
+                data: {user:$('#favUserId').val(), product: $('#favId').val()},
+                success: function() {
+                    $('.alert-favoutite').show()
+                    setTimeout(function() {
+                        $('.alert-favoutite').hide()
+                    }, 2000)
+                }
+            });    
+        });
+        $('.toCart').on('click', function() {
+            $.ajax({
+                type: 'POST',
+                url: "/cart",
+                data: {product: $('#favId').val()},
+                success: function(data) {
+                    $('.alert-cart').show();
+                    if (data.message != "Товар уже в вашей корзине") {
+                        $("a[href='/cart']").find('.count').text(parseInt($("a[href='/cart']").find('.count').text())+1);
+                    }
+                    $('.alert-cart').find('strong').text(data.message);
+                    setTimeout(function() {
+                        $('.alert-cart').hide()
+                    }, 2000)
+                }
+            });    
+        });
+        $(".rateit").bind('rated', function (event, value) {
+            $.ajax({
+                type: 'POST',
+                url: "/productpage",
+                data: {product: $('#favId').val(), rating: value},
+                success: function() {
+                    console.log('Rating saved!');
+                }
+            }); 
+             console.log(value);
+        });
+        //('vkbtn')(VK.Share.button('http://lavka.club/product-'+currentProduct._id, {type: 'link'}));
+        document.getElementById('vkbtn').innerHTML = VK.Share.button({ url: 'http://lavka.club/product-#{currentProduct._id}',
+                                                                       title: 'Лавка. #{currentProduct.name}',
+                                                                       description: 'Купить #{currentProduct.name} напрямую у мастерской #{currentWorkshop.name}',
+                                                                       image: 'http://lavka.club/#{currentProduct.gallery.substr(3)}',
+                                                                       noparse: true
+                                                                     }
+                                                                     , {type: 'custom', text:'<i class="fa fa-vk"></i>'});
+    
+    - if (user != null)
+        if (!user.productsTrained)
+            script(type='text/javascript').
+                $(document).on('ready', function() {
+                    var enjoyhint_instance = new EnjoyHint({
+                            onEnd:function(){
+                                console.log('Product trained');
+                                $.ajax({
+                                    type: 'POST',
+                                    url: "/training",
+                                    data: {user:$('#favUserId').val(), training: 'products'},
+                                    success: function() {
+                                        console.log('Training saved!');
+                                    }
+                                });
+                            }
+                    });
+                    var enjoyhint_script_steps = [
+                        {
+                            'click .toCart' : 'Попробуй добавить этот товар в корзину!',
+                            'skipButton' : {className: "mySkip", text: " Пропустить "}
+                        }
+                    ];
+                    enjoyhint_instance.set(enjoyhint_script_steps);
+                    enjoyhint_instance.run();
+                });    }
+    

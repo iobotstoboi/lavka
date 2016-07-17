@@ -1,0 +1,54 @@
+extends layout
+block seotitle
+    title= 'Лавка. Результаты поиска'
+block content
+    .message
+        if (message)
+            .alert.alert-info.alert-dismissible(role='alert')
+                button.close(type='button', data-dismiss='alert')
+                    span(aria-hidden='true') ×
+                    span.sr-only Close
+                strong= message
+    .row.service-rules.maincontent
+        .col-md-12
+            h3 Результаты поиска по запросу:&nbsp;
+                span(style="font-weight:normal; color:white;")=searchquery
+            .row.category
+                if results.length<1
+                    .col-md-12
+                        p По Вашему запросу ничего не найдено
+                        br
+                        br
+                        br
+                each productincat in results
+                    - if (highlightarray[productincat._id]) {var extraclass = 'extraproduct'} else {var  extraclass=""}
+                    .col-md-3.col-lg-2(class=extraclass)
+                        - if (productincat.url) {var url = productincat.url} else {var url = '/product-' + productincat._id}
+                        a(href=url, style="margin:15px 0;")
+                            img(src=productincat.previewImg, style='width: 100%;')
+                            .tovarname= productincat.name
+                            - if (productincat.views) {var views = productincat.views} else {var views = 0}
+                            .tovarCartFooter=views + ' '
+                                i.fa.fa-eye
+                                .rating
+                                - var parsdprice=parseInt( productincat.price.replace(/\s+/g, ''))
+                                if (isNaN(parsdprice))
+                                    .noprice
+                                        | цена
+                                        br
+                                        | не указана
+                                else
+                                    .price= parsdprice
+                                        i.fa.fa-rub.valuta
+                        .master
+                            - if (prodWorkInfo[productincat._id].alias) {var url = '/workshops/'+prodWorkInfo[productincat._id].alias} else {var url = '/workshop-' + prodWorkInfo[productincat._id]._id}
+                            a(href=url)
+                                if (typeof(prodWorkInfo[productincat._id].img40) !== 'undefined')
+                                    .master-avatar(style="background-image:url('" + prodWorkInfo[productincat._id].img40 + "'), url('assets/images/avatar.jpg');")
+                                else
+                                    .master-avatar(style="background-image:url('" + prodWorkInfo[productincat._id].workshopLogo + "'), url('assets/images/avatar.jpg');")
+                .col-md-12
+                    p.text-right
+                        a.btn.btn-info(href="/catalogue") В каталог
+                        | &nbsp;
+                        a.btn.btn-success(href="/") На главную

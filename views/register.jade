@@ -1,0 +1,218 @@
+extends layout
+block seotitle
+    title= 'Лавка. Страница регистрации'
+    meta(name="description", content='Страница регистрации пользователя ')
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    h3 Регистрация
+    br
+    .tabpanel
+        ul.nav.nav-tabs(role="tablist", style="font-size:20px;")
+            li.active(role="presentation")
+                a(href="#regUserForm", aria-controls="home", role="tab", data-toggle="tab") Покупатель
+            li(role="presentation")
+                a(href="#regWorkshopForm",aria-controls="profile", role="tab", data-toggle="tab") Продавец (Для размещения своих товаров на сайте)
+        .tab-content
+            #regUserForm.tab-pane.active(role="tabpanel")
+                if (user !== null)
+                    p(style="margin-top:15px; color: rgb(208, 187, 187);") Вы уже зарегистрированы на сайте.
+                    p
+                        a.btn.btn-info(href="/personal") Перейти в личный кабинет
+                else
+                    h3 Заполните форму
+                    form(role='form', method='POST', action='/register', name="register-form", enctype="multipart/form-data")
+                        .row
+                            .col-md-6
+                                .form-group#newUserEmailInput
+                                    label(for='emailInput') Email
+                                        span.tooltipster(data-tooltip="Укажите действующий email, иначе Вы не сможете восстановить пароль и получать уведомления") &nbsp;<i class="fa fa-question-circle"></i>
+                                        span.notValidMessage Укажите Ваш email
+                                    input#emailInput.form-control(type='email', name='emailInput', placeholder='Введите email')
+                                .form-group#newUserFirstNameInput
+                                    label(for='firstNameInput') Ваше имя
+                                        span.notValidMessage Укажите Ваше имя
+                                    input#firstNameInput.form-control(type='text', name='firstNameInput', placeholder='Введите ваше имя')
+                                .form-group#newUserSecondNameInput
+                                    label(for='secondNameInput') Ваша фамилия
+                                        span.notValidMessage Укажите Вашу Фамилию
+                                    input#secondNameInput.form-control(type='text', name='secondNameInput', placeholder='Введите вашу фамилию')
+                            .col-md-6
+                                .form-group
+                                    label(for='birthDateInput') Дата рождения
+                                        span.tooltipster(data-tooltip="Укажите в формате dd.mm.yyyy (для примера 27.02.1987)") &nbsp;<i class="fa fa-question-circle"></i>
+                                    input#birthDateInput.form-control(type='date', name='birthDateInput')
+                                .form-group#newUserPasswordInput
+                                    label(for='passwordInput') Пароль
+                                        span.notValidMessage Укажите пароль
+                                    input#passwordInput.form-control(type='password', name='passwordInput', placeholder='Password')
+                                //.checkbox
+                                    label
+                                        input#subscribeInput(type='checkbox', name='subscribeInput')
+                                        | Хочу получать новостную рассылку
+                                //.checkbox(style="color: white;border-top: 1px solid rgba(192, 192, 192, 0.23);padding-top: 5px;border-bottom: 1px solid rgba(192, 192, 192, 0.17);padding-bottom: 5px;")
+                                    label
+                                        input#termsOfUseInput(type='checkbox', name='termsOfUseInput')
+                                        | Принимаю условия сервиса
+                            .col-md-12.text-right
+                                button#registerNewUserButton.btn.btn-lg.btn-info(type='submit') Зарегистрироваться
+            #regWorkshopForm.tab-pane(role="tabpanel")
+                if (workshop !== null)
+                    p(style="margin-top:15px; color: rgb(208, 187, 187);") У Вас уже есть мастерская.
+                    p
+                        a.btn.btn-info(href="/workshop-private") Перейти в мастерскую
+                else
+                    if (user !== null)
+                        form(role='form', method='POST', action='/register-workshop-by-user', name="register-workshop-form", enctype="multipart/form-data")
+                            .row
+                                .col-md-12
+                                    h4="Аккаунт мастерской будет закреплен за пользователем " + user.get('username')
+                                    input(type="hidden", value= priceplan._id)
+                                    .form-group#inputWorkshopName
+                                        label(for='workshopNameInput') Наименование мастерской
+                                            span.notValidMessage Укажите наименование мастерской
+                                        input#workshopNameInput.form-control(type='text', name='workshopNameInput', placeholder='Введите наименование мастерской')
+                                    .form-group#inputWorkshopDescription
+                                        label(for='workshopDescriptiotInput') Краткое описание мастерской
+                                            span.tooltipster(data-tooltip="Не стесняйтесь рассказать о себе, хорошоее описание товаров и мастерской повышает продажи") &nbsp;<i class="fa fa-question-circle"></i>
+                                            span.notValidMessage Укажите краткое описание мастерской
+                                        textarea#workshopDescriptiotInput.form-control(type='text', name='workshopDescriptiotInput', placeholder='Введите описание мастерской', rows="8", style="margin-bottom: 23px;")
+                                    .form-group#inputWorkshopCity
+                                        label(for='workshopAdressInput') Город мастерской
+                                            span.tooltipster(data-tooltip="Укажите город расположения мастерской, это необходимо для сортировки мастерских.") &nbsp;<i class="fa fa-question-circle"></i>
+                                            span.notValidMessage Укажите город мастерской
+                                        input#workshopAdressInput.form-control(type='text', name='workshopAdressInput', placeholder='Введите город')
+                                    .form-group
+                                        label(for='workshopPhoneInput') Контактный телефон
+                                            span.tooltipster(data-tooltip="Контактный телефон может быть использован для связи с представителем мастерской. Контактный телефон не передается третьей стороне.") &nbsp;<i class="fa fa-question-circle"></i>
+                                        input#workshopPhoneInput.form-control(type='text', name='workshopPhoneInput', placeholder='Введите контактный телефон')
+                                .col-md-12.text-right
+                                    button#registerWorkshopByUserButton.btn.btn-lg.btn-info(type='submit') Создать аккаунт мастерской
+                    else
+                        form(role='form', method='POST', action='/register-workshop-new-user', name="register-workshop-form", enctype="multipart/form-data")
+                            .row
+                                .col-md-6
+                                    h3 Информация о пользователе
+                                    .form-group#newUserEmailInput
+                                        label(for='emailInput') Email
+                                            span.tooltipster(data-tooltip="Укажите действующий email, иначе Вы не сможете восстановить пароль и получать уведомления") &nbsp;<i class="fa fa-question-circle"></i>
+                                            span.notValidMessage Укажите Ваш email
+                                        input#emailInput.form-control(type='email', name='emailInput', placeholder='Введите email')
+                                    .form-group#newUserFirstNameInput
+                                        label(for='firstNameInput') Ваше имя
+                                            span.notValidMessage Укажите Ваше имя
+                                        input#firstNameInput.form-control(type='text', name='firstNameInput', placeholder='Введите ваше имя')
+                                    .form-group#newUserSecondNameInput
+                                        label(for='secondNameInput') Ваша фамилия
+                                            span.notValidMessage Укажите Вашу Фамилию
+                                        input#secondNameInput.form-control(type='text', name='secondNameInput', placeholder='Введите вашу фамилию')
+                                    .form-group
+                                        label(for='birthDateInput') Дата рождения
+                                            span.tooltipster(data-tooltip="Укажите в формате dd.mm.yyyy (для примера 27.02.1987)") &nbsp;<i class="fa fa-question-circle"></i>
+                                        input#birthDateInput.form-control(type='date', name='birthDateInput')
+                                    .form-group#newUserPasswordInput
+                                        label(for='passwordInput') Пароль
+                                            span.notValidMessage Укажите пароль
+                                        input#passwordInput.form-control(type='password', name='passwordInput', placeholder='Password')
+                                    //.checkbox
+                                        label
+                                            input#subscribeInput(type='checkbox', name='subscribeInput')
+                                            | Хочу получать новостную рассылку
+                                    //.checkbox(style="color: white;border-top: 1px solid rgba(192, 192, 192, 0.23);padding-top: 5px;border-bottom: 1px solid rgba(192, 192, 192, 0.17);padding-bottom: 5px;")
+                                        label
+                                            input#termsOfUseInput(type='checkbox', name='termsOfUseInput')
+                                            | Принимаю условия сервиса
+                                .col-md-6
+                                    h3 Информация о мастерской
+                                    input(type="hidden", value = priceplan._id)
+                                    .form-group#newUserWorkshopNameInput
+                                        label(for='workshopNameInput') Наименование мастерской
+                                            span.notValidMessage Укажите наименование мастерской
+                                        input#firstNameInput.form-control(type='text', name='workshopNameInput', placeholder='Введите наименование мастерской')
+                                    .form-group#newUserWorkshopDescriptionInput
+                                        label(for='workshopDescriptiotInput') Краткое описание мастерской
+                                            span.tooltipster(data-tooltip="Не стесняйтесь рассказать о себе, хорошоее описание товаров и мастерской повышает продажи") &nbsp;<i class="fa fa-question-circle"></i>
+                                            span.notValidMessage Укажите описание мастерской
+                                        textarea#firstNameInput.form-control(type='text', name='workshopDescriptiotInput', placeholder='Введите описание мастерской', rows="8", style="margin-bottom: 23px;")
+                                    .form-group#newUserWorkshopCityInput
+                                        label(for='workshopAdressInput') Город мастерской
+                                            span.tooltipster(data-tooltip="Укажите город расположения мастерской, это необходимо для сортировки мастерских.") &nbsp;<i class="fa fa-question-circle"></i>
+                                            span.notValidMessage Укажите город мастерской
+                                        input#firstNameInput.form-control(type='text', name='workshopAdressInput', placeholder='Введите город мастерской')
+                                    .form-group
+                                        label(for='workshopPhoneInput') Контактный телефон
+                                            span.tooltipster(data-tooltip="Контактный телефон может быть использован для связи с представителем мастерской. Контактный телефон не передается третьей стороне.") &nbsp;<i class="fa fa-question-circle"></i>
+                                        input#firstNameInput.form-control(type='text', name='workshopPhoneInput', placeholder='Введите контактный телефон')
+                                .col-md-12.text-right
+                                    p Нажимая на кнопку Вы принимаете
+                                        a(href="http://lavka.club/rules")= ' условия сервиса'
+                                    button#registerWorkshopNewUserButton.btn.btn-lg.btn-info(type='submit') Создать аккаунт мастерской
+    br
+    br
+    br
+    br
+block customjs
+    script(type='text/javascript').
+        //===========================================
+        // Добавление нового пользователя и мастерской
+        $('#registerNewUserButton').on('click', function(){
+        var valid=true;
+
+
+        // Емайл пользователя
+        if ($('#newUserEmailInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserEmailInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserFirstNameInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserFirstNameInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserSecondNameInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserSecondNameInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserPasswordInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserPasswordInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Смотрим что получилось по итогу
+            if (valid) {
+
+            } else {
+                return false;
+            }
+        });
+
+        // Убираем предупреждение с поля если пользователь его изменил
+        $('#newUserEmailInput input').on('change', function(){
+            $('#newUserEmailInput').removeClass('notvalid');
+        })
+        $('#newUserFirstNameInput input').on('change', function(){
+            $('#newUserFirstNameInput').removeClass('notvalid');
+        })
+        $('#newUserSecondNameInput input').on('change', function(){
+            $('#newUserSecondNameInput').removeClass('notvalid');
+        })
+        $('#newUserPasswordInput input').on('change', function(){
+            $('#newUserPasswordInput').removeClass('notvalid');
+        })
+

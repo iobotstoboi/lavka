@@ -1,0 +1,358 @@
+extends layout
+block seotitle
+    title= 'Лавка. Создать мастерскую'
+    meta(name="description", content="Лавка. Создание создание мастерской для продажи изделий ручной работы")
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .row.masters-promo-back
+        .col-md-12
+            .masters-banner
+                .masters-banner-logo
+                h3  Добро пожаловать в
+                h1  Сообщество
+                h1(style='font-size: 50px;') мастеров и ремесленников
+                p  Уникальное место, где объединяются мастера и покупатели
+            .col-md-12.learn-more
+                h2  Узнать больше
+                h3 Мы - сообщество мастеров и ремесленников,
+                    br
+                    | а также ценителей уникальных изделий, сделанных вручную.
+                p(style="text-align:justify;") Наша основная задача предоставить мастерам и покупателям простые и понятные инструменты для управления продажами и совершения и покупок,  проведения тематических мероприятий и общения, обмена опытом и технологиями на сайте.
+                    |   Наша миссия - развитие всего сообщества и его мастеров и покупателей так, чтобы с одной стороны творческие люди могли создавать свои уникальные изделия и при этом получали хороший доход и были уверены в завтрашнем дне, с другой стороны удовлетворить огромный спрос потребителей на товары ручной работы, сделать hand-made товары популярнее товаров массового производства.
+                p(style="text-align:justify;")   Мы работаем для того чтобы вдохновлять и открывать новые горизонты для всех мастеров и ремесленников, для того чтобы максимально упростить схему продаж и доставки товаров, для того чтобы покупатель мог в простой и удобной форме получить необходимую информацию об изделиях и мастерских.
+                    |   Мы гордимся достигнутыми результатами и планируем достичь большего вместе с Вами. Наше сообщество растет и развивается с каждым днем, а с ним растут возможности нашего сервиса. Каждая новая мастерская  и новый покупатель на сайте лишний раз подтверждает, что мы на правильном пути.
+            .col-md-6.learn-more
+                p.text-center(style="color: rgb(255, 213, 79); font-size:24px")
+                    strong Торговая площадка
+                p(style="font-size:18px; text-align:justify;")   Опытные мастера знают - процесс продаж своих товаров - достаточно сложный процесс и порой требует не меньше времени, чем необходимо на создание самого изделия. Мы изучили и систематизировали все процессы, все действия, которые приходится совершать мастерской для осуществления и управления продажами. Как результат - мы постарались максимально упростить и автоматизировать все процессы связанные с продажами, для того, чтобы мастера могли сэкономить свое время и посвятить его более важным делам. Скажем больше, работа по улучшению ведется на регулярной основе и мы постоянно улучшаем наш сервис и увеличиваем возможности сайта.
+            .col-md-6.learn-more
+                p.text-center(style="color: rgb(255, 213, 79); font-size:24px")
+                    strong Сообщество
+                p(style="font-size:18px; text-align:justify;")   Мы представляем Вам сообщество мастеров, дизайнеров, творцов и предпринимателей, которые объединились под флагами творчества и созидания, чтобы расти и развиваться вместе. Только обмен опытом, постоянные эксперименты и конкурентная среда дают ошеломляющий рост мастерства. Лавка - это многофункциональная площадка, здесь есть множество возможностей для саморазвития, для обмена опытом, для объединения мастеров в клубы и гильдии, для проведения мастерклассов, для общения с покупателями и создания собственного бренда. Мы предлагаем Вам уникальные инструменты работы с покупателями и коллегами.
+            .col-md-12
+                h3#joinLavkaMasters.text-center(style='color: rgb(255, 213, 79); text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.55); margin-top: 37px;')
+                    strong
+                        | Добро пожаловать
+                        br
+                        | в мир творчества и гармонии!
+                p.text-center
+                    if (!workshop)
+                        button.btn.btn-lg.btn-danger(data-toggle="modal", data-target="#newMasterModal", style='font-size: 24px; font-weight: bold; text-shadow: 1px 1px 3px black; text-transform: uppercase;')  Стать участником
+                    else
+                        a.btn.btn-lg.btn-danger(href="/workshop-private", style='font-size: 24px; font-weight: bold; text-shadow: 1px 1px 3px black; text-transform: uppercase;') Перейти в личный кабинет
+    .row.masters-promo-points
+        .col-md-4.masters-promo-point
+            .masters-promo-point-icon
+                //
+                  i class="fa fa-users"></i
+            .masters-promo-point-header
+                h3  Огромная аудитория
+            .masters-promo-point-text
+                p
+                    | Товары массового производства больше не интересуют потребителя. В них нет "души". Люди ищут уникальные изделия, сделанные с теплом и любовью мастера. Ежедневно нам приходят тысячи запросов от покупателей в поисках авторских работ. Мы приведем этих людей к Вам.
+        .col-md-4.masters-promo-point
+            .masters-promo-point-icon
+                //
+                  i class="fa fa-money"></i
+            .masters-promo-point-header
+                h3  Зарабатывай с нами
+            .masters-promo-point-text
+                p(style="text-shadow: 1px 1px 1px black, 1px 1px 1px black,1px 1px 1px black, 1px 1px 1px black;")
+                    | Мы предоставляем мастерам легкий способ продавать свои работы через интернет на нашем сайте. Вы сможете без особых усилий найти найти покупателей по всей России. Никаких лишних забот и трат времени. Моментальная регистрация и добавление товаров в два клика.
+        .col-md-4.masters-promo-point
+            .masters-promo-point-icon
+                //
+                  i class="fa fa-comments"></i
+            .masters-promo-point-header
+                h3  Сообщество мастеров
+            .masters-promo-point-text
+                p
+                    | Мы намного больше, чем просто платформа для продажи товаров в интернете - мы сообщество мастеров и ремесленников. Нас объединяет любовь к своему ремеслу и творчеству. Мы растем и развиваемся вместе, проводим мероприятия и делимся опытом.
+    .row.steps
+        .col-md-12
+            h3.text-center
+                | Всего 4 шага
+                br
+                | и Вы в нашей команде
+        .col-md-3.onestep
+            img(src='assets/images/masters/step6.png')
+            h3
+                span  1
+                | Зарегистрируйтесь на сайте
+            p.text-center
+                | Регистрация осуществляется моментально.
+                if (!workshop)
+                    span= ' Просто заполните форму по ссылке '
+                    a(href='', data-toggle="modal", data-target="#newMasterModal", style="color: white;font-weight: bold;") Регистрация.
+        .col-md-3.onestep
+            img(src='assets/images/masters/step7.png')
+            h3(style='background-color: rgb(255, 122, 0);')
+                span  2
+                | Расскажите о Cебе
+            p.text-center(style='background-color: rgb(255, 122, 0);')
+                | Оформите Свою собственную
+                strong "Лавку"
+                | . Расскажите о Вашей мастерской.
+                br
+        .col-md-3.onestep
+            img(src='assets/images/masters/step2.png')
+            h3(style='background-color: rgba(68, 110, 138, 1);')
+                span  3
+                | Добавьте товары
+            p.text-center(style='background-color: rgba(68, 110, 138, 1);')
+                | Загружайте товары в два клика и не стесняйтесь побольше рассказать о Cвоих уникальных товарах.
+        .col-md-3.onestep
+            img(src='assets/images/masters/step5.png')
+            h3(style='background-color: rgb(99, 184, 33);')
+                span  4
+                | Готово!
+            p.text-center(style='background-color: rgb(99, 184, 33);')
+                | Поздравляем! Все готово для начала продаж.
+                br
+    //
+     Modal
+    #newMasterModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                        span.sr-only Закрыть
+                    h4#myModalLabel.modal-title Регистрация мастера
+                .modal-body
+                    if (user !== null)
+                        form(role='form', method='POST', action='/register-workshop-by-user', name="register-workshop-form", enctype="multipart/form-data")
+                            .row
+                                .col-md-12
+                                    h4="Аккаунт мастерской будет закреплен за пользователем " + user.get('username')
+                                    input(type="hidden", value= priceplan._id)
+                                    .form-group#inputWorkshopName
+                                        label(for='workshopNameInput') Наименование мастерской
+                                            span.notValidMessage Укажите наименование мастерской
+                                        input#workshopNameInput.form-control(type='text', name='workshopNameInput', placeholder='Введите наименование мастерской')
+                                    .form-group#inputWorkshopDescription
+                                        label(for='workshopDescriptiotInput') Краткое описание мастерской
+                                            span.tooltipster(data-tooltip="Не стесняйтесь рассказать о себе, хорошоее описание товаров и мастерской повышает продажи") &nbsp;<i class="fa fa-question-circle"></i>
+                                            span.notValidMessage Укажите краткое описание мастерской
+                                        textarea#workshopDescriptiotInput.form-control(type='text', name='workshopDescriptiotInput', placeholder='Введите описание мастерской', rows="8", style="margin-bottom: 23px;")
+                                    .form-group#inputWorkshopCity
+                                        label(for='workshopAdressInput') Город мастерской
+                                            span.tooltipster(data-tooltip="Укажите город расположения мастерской, это необходимо для сортировки мастерских.") &nbsp;<i class="fa fa-question-circle"></i>
+                                            span.notValidMessage Укажите город мастерской
+                                        input#workshopAdressInput.form-control(type='text', name='workshopAdressInput', placeholder='Введите адрес мастерской')
+                                    .form-group
+                                        label(for='workshopPhoneInput') Контактный телефон
+                                            span.tooltipster(data-tooltip="Контактный телефон может быть использован для связи с представителем мастерской. Контактный телефон не передается третьей стороне.") &nbsp;<i class="fa fa-question-circle"></i>
+                                        input#workshopPhoneInput.form-control(type='text', name='workshopPhoneInput', placeholder='Введите контактный телефон')
+                                .col-md-12.text-right
+                                    button#registerWorkshopByUserButton.btn.btn-lg.btn-info(type='submit') Создать аккаунт мастерской
+                    else
+                        form(role='form', method='POST', action='/register-workshop-new-user', name="register-workshop-form", enctype="multipart/form-data")
+                            .row
+                                .col-md-6
+                                    h3 Информация о пользователе
+                                    .form-group#newUserEmailInput
+                                        label(for='emailInput') Email
+                                            span.tooltipster(data-tooltip="Укажите действующий email, иначе Вы не сможете восстановить пароль и получать уведомления") &nbsp;<i class="fa fa-question-circle"></i>
+                                            span.notValidMessage Укажите Ваш email
+                                        input#emailInput.form-control(type='email', name='emailInput', placeholder='Введите email')
+                                    .form-group#newUserFirstNameInput
+                                        label(for='firstNameInput') Ваше имя
+                                            span.notValidMessage Укажите Ваше имя
+                                        input#firstNameInput.form-control(type='text', name='firstNameInput', placeholder='Введите ваше имя')
+                                    .form-group#newUserSecondNameInput
+                                        label(for='secondNameInput') Ваша фамилия
+                                            span.notValidMessage Укажите Вашу Фамилию
+                                        input#secondNameInput.form-control(type='text', name='secondNameInput', placeholder='Введите вашу фамилию')
+                                    .form-group
+                                        label(for='birthDateInput') Дата рождения
+                                            span.tooltipster(data-tooltip="Укажите в формате dd.mm.yyyy (для примера 27.02.1987)") &nbsp;<i class="fa fa-question-circle"></i>
+                                        input#birthDateInput.form-control(type='date', name='birthDateInput', placeholder='Введите ваше имя')
+                                    .form-group#newUserPasswordInput
+                                        label(for='passwordInput') Пароль
+                                            span.notValidMessage Укажите пароль
+                                        input#passwordInput.form-control(type='password', name='passwordInput', placeholder='Password')
+                                    .checkbox
+                                        label
+                                            input#subscribeInput(type='checkbox', name='subscribeInput')
+                                            | Хочу получать новостную рассылку
+                                    .checkbox(style="color: white;border-top: 1px solid rgba(192, 192, 192, 0.23);padding-top: 5px;border-bottom: 1px solid rgba(192, 192, 192, 0.17);padding-bottom: 5px;")
+                                        label
+                                            input#termsOfUseInput(type='checkbox', name='termsOfUseInput')
+                                            | Принимаю условия сервиса
+                                .col-md-6
+                                    h3 Информация о мастерской
+                                    input(type="hidden", value = priceplan._id)
+                                    .form-group#newUserWorkshopNameInput
+                                        label(for='workshopNameInput') Наименование мастерской
+                                            span.notValidMessage Укажите наименование мастерской
+                                        input#firstNameInput.form-control(type='text', name='workshopNameInput', placeholder='Введите наименование мастерской')
+                                    .form-group#newUserWorkshopDescriptionInput
+                                        label(for='workshopDescriptiotInput') Краткое описание мастерской
+                                            span.tooltipster(data-tooltip="Не стесняйтесь рассказать о себе, хорошоее описание товаров и мастерской повышает продажи") &nbsp;<i class="fa fa-question-circle"></i>
+                                            span.notValidMessage Укажите описание мастерской
+                                        textarea#firstNameInput.form-control(type='text', name='workshopDescriptiotInput', placeholder='Введите описание мастерской', rows="8", style="margin-bottom: 23px;")
+                                    .form-group#newUserWorkshopCityInput
+                                        label(for='workshopAdressInput') Город мастерской
+                                            span.tooltipster(data-tooltip="Укажите город расположения мастерской, это необходимо для сортировки мастерских.") &nbsp;<i class="fa fa-question-circle"></i>
+                                            span.notValidMessage Укажите город мастерской
+                                        input#firstNameInput.form-control(type='text', name='workshopAdressInput', placeholder='Введите город мастерской')
+                                    .form-group
+                                        label(for='workshopPhoneInput') Контактный телефон
+                                            span.tooltipster(data-tooltip="Контактный телефон может быть использован для связи с представителем мастерской. Контактный телефон не передается третьей стороне.") &nbsp;<i class="fa fa-question-circle"></i>
+                                        input#firstNameInput.form-control(type='text', name='workshopPhoneInput', placeholder='Введите контактный телефон')
+                                .col-md-12.text-left
+                                    button#registerWorkshopNewUserButton.btn.btn-lg.btn-info(type='submit') Создать аккаунт мастерской
+                .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
+block customjs
+    script(type='text/javascript').
+        $('#registerWorkshopByUserButton').on('click', function(){
+        var valid=true;
+
+        // Наименование мастерской
+        if ($('#inputWorkshopName input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#inputWorkshopName').addClass('notvalid');
+            valid=false;
+        }
+
+        // Описание мастерской
+        if ($('#inputWorkshopDescription textarea').val()) {
+           // Описание мастерской есть
+        } else {
+           // Не указано описание мастерской
+            $('#inputWorkshopDescription').addClass('notvalid');
+            valid=false;
+        }
+
+        // Город мастерской
+        if ($('#inputWorkshopCity input').val()) {
+           // Город мастерской указан
+        } else {
+           // Не указан Город мастерской
+            $('#inputWorkshopCity').addClass('notvalid');
+            valid=false;
+        }
+
+        // Смотрим что получилось по итогу
+            if (valid) {
+
+            } else {
+                return false;
+            }
+        });
+
+        // Убираем предупреждение с поля если пользователь его изменил
+        $('#inputWorkshopName input').on('change', function(){
+            $('#inputWorkshopName').removeClass('notvalid');
+        })
+        $('#inputWorkshopDescription textarea').on('change', function(){
+            $('#inputWorkshopDescription').removeClass('notvalid');
+        })
+        $('#editWorkshopCity input').on('focus', function(){
+            $('#inputWorkshopCity').removeClass('notvalid');
+        })
+
+        //===========================================
+        // Добавление нового пользователя и мастерской
+        $('#registerWorkshopNewUserButton').on('click', function(){
+        var valid=true;
+
+
+        // Емайл пользователя
+        if ($('#newUserEmailInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserEmailInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserFirstNameInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserFirstNameInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserSecondNameInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserSecondNameInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserPasswordInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserPasswordInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Наименование мастерской
+        if ($('#newUserWorkshopNameInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserWorkshopNameInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Описание мастерской
+        if ($('#newUserWorkshopDescriptionInput textarea').val()) {
+           // Описание мастерской есть
+        } else {
+           // Не указано описание мастерской
+            $('#newUserWorkshopDescriptionInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Город мастерской
+        if ($('#newUserWorkshopCityInput input').val()) {
+           // Город мастерской указан
+        } else {
+           // Не указан Город мастерской
+            $('#newUserWorkshopCityInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Смотрим что получилось по итогу
+            if (valid) {
+
+            } else {
+                return false;
+            }
+        });
+
+        // Убираем предупреждение с поля если пользователь его изменил
+        $('#newUserEmailInput input').on('change', function(){
+            $('#newUserEmailInput').removeClass('notvalid');
+        })
+        $('#newUserFirstNameInput input').on('change', function(){
+            $('#newUserFirstNameInput').removeClass('notvalid');
+        })
+        $('#newUserSecondNameInput input').on('change', function(){
+            $('#newUserSecondNameInput').removeClass('notvalid');
+        })
+        $('#newUserPasswordInput input').on('change', function(){
+            $('#newUserPasswordInput').removeClass('notvalid');
+        })
+
+        $('#newUserWorkshopNameInput input').on('change', function(){
+            $('#newUserWorkshopNameInput').removeClass('notvalid');
+        })
+        $('#newUserWorkshopDescriptionInput textarea').on('change', function(){
+            $('#newUserWorkshopDescriptionInput').removeClass('notvalid');
+        })
+        $('#newUserWorkshopCityInput input').on('focus', function(){
+            $('#newUserWorkshopCityInput').removeClass('notvalid');
+        })

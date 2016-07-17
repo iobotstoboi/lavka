@@ -1,0 +1,90 @@
+extends layout
+block seotitle
+    title Лавка. Контакты
+    meta(name="description", content="Лавка. Свяжитесь с нами")
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .row.maincontent(style="background-image: url('assets/images/back1.jpg');background-size: cover;background-position: top;background-repeat: no-repeat;")
+        .col-md-12.headerOnProductPage
+            h3 Контакты
+        .col-md-12(style="font-size:18px;")
+            h3.text-center(style="font-family: Lobster;font-size: 53px;color: rgb(255, 60, 60);font-weight: normal;") Добро пожаловать!
+                span.substring(style="font-size:24px; margin-top:-5px;color: rgb(255, 173, 0);") Мы всегда открыты для предложений
+                span.substring(style="font-size:20px; margin-top:-5px;color: rgb(255, 173, 0);") и готовы выслушать все замечания по работе нашего сервиса
+            p Только совместными усилиями мы можем обеспечить развитие сервиса Лавки и всего сообщества Мастеров и Покупателей изделий ручной работы.
+            div(style="margin: 20px -15px; box-shadow: 0 14px 25px -16px black, 0 -14px 25px -16px black;")
+                img(src="assets/images/contacts.jpg", style="width:100%")
+            br
+            h3(style="color: rgb(255, 180, 60); margin:0;")  Вопросы и предложения по работе сервиса
+            p Свои вопросы и предложения по улучшению сервиса вы можете отправлять на адрес
+                a(data-toggle="modal" data-target="#sendMailModal")
+                    strong(style="color: rgb(255, 180, 60); margin:0; cursor:pointer;")= ' hello@lavka.club'
+                | . Мы очень внимательно относимся ко всем отзывам о работе и идеям для улучшения сервиса. Авторов наиболее ценных отзывов и предложений могут получить призы и подарки от нашего сервиса.
+            br
+            h3(style="color: rgb(255, 180, 60); margin:0;")  Финансовые вопросы и платежи
+            p Вопросы связанные с платежами в сервисе отправляйте на адрес
+                a(data-toggle="modal" data-target="#sendMailModal")
+                    strong(style="color: rgb(255, 180, 60); margin:0;cursor:pointer;")= ' payments@lavka.club'
+                | . Наши специалисты постараются максимально быстро разобраться в вашем вопросе.
+            br
+            h3(style="color: rgb(255, 180, 60); margin:0;")  Техническая поддержка
+            p В случае некорректной работы сервиса, сложностей с осуществлением действий с товарами и личными данными обращайтесь в техподдержку
+                a(data-toggle="modal" data-target="#sendMailModal")
+                    strong(style="color: rgb(255, 180, 60); margin:0;cursor:pointer;")= ' support@lavka.club'
+                | .
+            br
+            h3(style="color: rgb(255, 180, 60); margin:0;")  Остальные вопросы
+            p Все остальные вопросы вы можете отправить в службу по работе с клиентами по адресу
+                a(data-toggle="modal" data-target="#sendMailModal")
+                    strong(style="color: rgb(255, 180, 60); margin:0;cursor:pointer;")= ' info@lavka.club'
+                | .
+            br
+            h3.text-center(style="font-family: Lobster;font-size: 36px;color: rgb(255, 180, 60);font-weight: normal;") Мы работаем для вас!
+            br
+            br
+            if (message)
+                .alert.alert-warning.alert-dismissible(role='alert')
+                    button.close(type='button', data-dismiss='alert')
+                        span(aria-hidden='true') ×
+                        span.sr-only Close
+                    strong= message
+            #sendMailModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="mySmallModalLabel", aria-hidden="true")
+                .modal-dialog.modal-sm
+                    .modal-content
+                        .modal-header
+                            button.close(data-dismiss="modal")
+                                span(aria-hidden="true") &times;
+                                span.sr-only Закрыть
+                            h4.modal-title Обратная связь
+                        .modal-body
+                            form(method="POST", action="/sendmail")
+                                .form-group
+                                    label(for='lavkamail') Отдел
+                                    select.form-control#lavkamail(name='lavkamail')
+                                        option(selected = "", disabled="") Выберите службу сервиса Лавка.Клуб
+                                        option(value="hello@lavka.club") Служба по работе с клиентами
+                                            strong= " hello@lavka.club"
+                                        option(value="payments@lavka.club") Финансовый отдел
+                                            strong= " payments@lavka.club"
+                                        option(value="support@lavka.club") Техническая поддержка
+                                            strong= " support@lavka.club"
+                                        option(value="info@lavka.club") Информационная служба
+                                            strong= " info@lavka.club"
+                                .form-group
+                                    label(for='usermail')= 'Ваш email '
+                                        span.tooltipster(data-tooltip="Адрес на который будет отправлен ответ", style="font-size:14px; font-weight:normal") ?
+                                    input#usermail.form-control(type='email', name='usermail', placeholder='Введите Cвой email')
+                                .form-group
+                                    label(for='username')= 'Ваше имя '
+                                        span.tooltipster(data-tooltip="Ваше ФИО", style="font-size:14px;font-weight:normal") ?
+                                    input#username.form-control(type='text', name='username', placeholder='Введите Ваше имя')
+                                .form-group
+                                    label(for='usercontact')= 'Контактный телефон '
+                                        span.tooltipster(data-tooltip="Может потребоваться для оперативной связи", style="font-size:14px;font-weight:normal") ?
+                                    input#usercontact.form-control(type='text', name='usercontact', placeholder='Введите Свой номер телефона')
+                                .form-group
+                                    label(for='usercomment')= 'Текст сообщения '
+                                        span.tooltipster(data-tooltip="Если вы зарегистрированный пользователь - не забудьте указать email, на который зарегистрирован Ваш аккаунт", style="font-size:14px;font-weight:normal") ?
+                                    textarea#usercomment.form-control(name='usercomment', placeholder='Введите тест сообщения', style="resize: none;", rows=6)
+                                button.btn.btn-info(type='submit')
+                                    strong Отправить сообщение

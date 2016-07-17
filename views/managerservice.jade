@@ -1,0 +1,50 @@
+extends managerlayout
+block seotitle
+    title= 'Панель управления | Лавка'
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content 
+    .content-wrapper
+        // Content Header (Page header)
+        section.content-header
+          h1.pull-left=title
+          a.btn.btn-primary(style="margin-left: 15px" data-toggle="modal" data-target="#myModal") Добавить
+          ol.breadcrumb
+            li
+              a(href='#')
+                i.fa.fa-dashboard
+                |  Home
+            li.active Dashboard
+        // Main content
+        section.content
+          .row.maincontent
+            .products
+                .product
+                    - console.log (Object.keys(product).length)
+                    - for (var x = 0; x < Object.keys(product).length; x++)
+                        .card.col-md-2
+                            span.delete(data-productId=product[x]._id) ×
+                            img(src=product[x].previewImg class="img-responsive")
+                            h4=product[x].name
+        .alerts
+        #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel')
+          .modal-dialog(role='document')
+            form#formAddService
+                .modal-content
+                  .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                      span(aria-hidden='true') ×
+                    h4#myModalLabel.modal-title Добавить супертовар
+                  .modal-body
+                      .form-group
+                        label ID товара
+                        input.form-control(type='text', placeholder='ID товара' name="prodid")
+                      input.form-control(value='super', type='hidden' name="type")
+                      .form-group
+                        label Дата окончания
+                        input.form-control(type='date' name="enddate")
+                  .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
+                    button.btn.btn-primary(type='submit') Добавить
+                        
+
+                    

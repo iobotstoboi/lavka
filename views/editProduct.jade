@@ -1,0 +1,204 @@
+extends layoutCut
+block seotitle
+    title= 'Лавка. Страница редактирования профиля товара'
+    meta(name="description", content="Лавка. Изделия ручной работы в разделе")
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .row.maincontent
+        .col-md-12.maincontent-controls
+            a.btn.btn-lg.btn-info(href="/workshop-private") Вернуться в мастерскую
+            - if (product.active == 'false') {var dis=true;} else {var dis=false;} // Если статус = неактивный то дизэйблед иначе нет
+            button.btn.btn-lg.btn-danger(data-toggle="modal" data-target="#addToSuperListModal", disabled=(dis===true ? "disabled" : undefined)) Супер-предложение
+            #addToSuperListModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='mySmallModalLabel', aria-hidden='true')
+                .modal-dialog.modal-sm
+                    .modal-content
+                        .modal-body
+                            button.close(type="button", data-dismiss="modal")
+                                span(aria-hidden="true") &times;
+                                span.sr-only Закрыть
+                            h3 Услуга "Супер-предложение"
+                            p Стоимость услуги 150 рублей
+                            p Срок размещения 10 дней
+                            p Ваш товар будет отображаться на главной странице в разделе "Супер предложений" и его увидит огромное количество пользователей.
+                            if (parseInt(user.get('balance')) >= 150)
+                                p Применить услугу "Супер-предложение"?
+                                form(method="POST", action="/apply-service-product", name="apply-super-product", role="form", enctype="multipart/form-data", style="display:inline-block;")
+                                    input(type="hidden", name="productid", value='' + product._id)
+                                    input(type="hidden", name="service", value='super')
+                                    button#addToSuperListButton.btn.btn-lg.btn-danger(type='submit') Применить
+                            else
+                                p.bg-primary.text-center(style="padding:5px;") У вас недостаточно средств
+                                a.btn.btn-lg.btn-danger(href="") Пополнить баланс
+                            button.btn.btn-default.btn-lg(type="button", data-dismiss="modal") Отказаться
+            button.btn.btn-lg.btn-warning(data-toggle="modal" data-target="#addToBestListModal", disabled=(dis===true ? "disabled" : undefined)) Лучшее предложение
+            #addToBestListModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='mySmallModalLabel', aria-hidden='true')
+                .modal-dialog.modal-sm
+                    .modal-content
+                        .modal-body
+                            button.close(type="button", data-dismiss="modal")
+                                span(aria-hidden="true") &times;
+                                span.sr-only Закрыть
+                            h3 Услуга "Лучшее-предложение"
+                            p Стоимость услуги 80 рублей
+                            p Срок размещения 10 дней
+                            p Ваш товар будет отображаться в блоке "Лучшее предложений" на странице товаров категории каталога и его увидит огромное количество пользователей.
+                            if (parseInt(user.get('balance')) >= 80)
+                                p Применить услугу "Лучшее-предложение"?
+                                form(method="POST", action="/apply-service-product", name="apply-best-product", role="form", enctype="multipart/form-data", style="display:inline-block;")
+                                    input(type="hidden", name="productid", value='' + product._id)
+                                    input(type="hidden", name="service", value='best')
+                                    button#addToBestListButton.btn.btn-lg.btn-warning(type="submit") Применить
+                            else
+                                p.bg-primary.text-center(style="padding:5px;") У вас недостаточно средств
+                                a.btn.btn-lg.btn-danger(href="") Пополнить баланс
+                            button.btn.btn-default.btn-lg(type="button", data-dismiss="modal") Отказаться
+            button.btn.btn-lg.btn-success(data-toggle="modal" data-target="#highlightProductModal", disabled=(dis===true ? "disabled" : undefined)) Выделить товар
+            #highlightProductModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='mySmallModalLabel', aria-hidden='true')
+                .modal-dialog.modal-sm
+                    .modal-content
+                        .modal-body
+                            button.close(type="button", data-dismiss="modal")
+                                span(aria-hidden="true") &times;
+                                span.sr-only Закрыть
+                            h3 Услуга "Выделение товара"
+                            p Стоимость услуги 50 рублей
+                            p Срок выделения 10 дней
+                            p Ваш товар будет выделяться в списке товаров на всех страница сайта и его заметит огромное количество пользователей.
+                            if (parseInt(user.get('balance')) >= 50)
+                                p Применить услугу "Выделение товара"?
+                                form(method="POST", action="/apply-service-product", name="apply-highlight-product", role="form", enctype="multipart/form-data", style="display:inline-block;")
+                                    input(type="hidden", name="productid", value='' + product._id)
+                                    input(type="hidden", name="service", value='highlight')
+                                    button#highlightProductButton.btn.btn-lg.btn-success(type="submit") Применить
+                            else
+                                p.bg-primary.text-center(style="padding:5px;") У вас недостаточно средств
+                                a.btn.btn-lg.btn-danger(href="") Пополнить баланс
+                            button.btn.btn-default.btn-lg(type="button", data-dismiss="modal") Отказаться
+        .col-md-12.col-lg-12.col-xs-12.right-side-bar
+            h3= 'Редактировать информацию о товаре "' + product.name + '"'
+                if (product.active == 'false')
+                    if (abilityActivateProduct)
+                        form(method="POST", action="/activate-product", name="activate-product", role="form", enctype="multipart/form-data")
+                            input(type="hidden", name="productid", value='' + product._id)
+                            button.btn.btn-lg.btn-success(style="float:right;margin-top: -35px;", type='submit', data-toggle="tooltip", data-placement="top", title="Измените тариф") Активировать
+                    else
+                        button.btn.btn-lg.btn-success(style="float:right;margin-top: -10px;", disabled="disabled") Активировать
+            if (product.active == 'false')
+                p.bg-primary(style="padding:15px;") Товар не активен
+                    span(style="color:silver; font-style:italic;")= ' ' + '(не отображается в каталоге)'
+                    br
+                    if (!abilityActivateProduct)
+                        span Для активации товара вам необходимо изменить тариф
+
+            form(role='form', method='POST', action='/edit-product', name="updateProduct", enctype="multipart/form-data")
+                input(type="hidden", name="_id", value= product._id)
+                .row
+                    .col-md-8
+                        .form-group#categoryCreateProduct
+                            label Категория каталога
+                                span.notValidMessage Не указана категория каталога
+                            select.form-control(name="category")
+                                each val in datka
+                                    optgroup(label=val.self.name)
+                                        each chi in val.childs
+                                            if (product._categoryId.toString() == chi._id.toString())
+                                                option(value=chi._id, selected='selected')= chi.name
+                                            else
+                                                option(value=chi._id)= chi.name
+                                optgroup(label="Другое")
+                                    option(value="") Другое
+                        .form-group#nameCreateProduct
+                            label(for='namename') Наименование товара
+                                span.notValidMessage Не указано наименование товара
+                            input#namename.form-control(type='text', name='namename', placeholder='Введите наименование', value=product.name)
+                        //.form-group
+                            label(for='introText') Краткое описание товара
+                            textarea#introText.form-control(name='introText', placeholder='Введите краткое описание', rows="4")= product.introText
+                        .form-group#descriptionCreateProduct
+                            label(for='description') Полное описание товара
+                                span.notValidMessage Не указано описание товара
+                            textarea#description.form-control(type='text', rows=6, name='description', placeholder='Введите полное описание товара', style="resize:none;")= product.description
+                        .form-group#priceCreateProduct
+                            label(for='price') Цена товара
+                                span.notValidMessage Не указана цена товара
+                            input#price.form-control(type='text', name='price', value=product.price)
+                        .form-group#availableCreateProduct
+                                                        label(for='price') Количество
+                                                            span.notValidMessage Не указано количество
+                                                        input#available.form-control(type='number', name='availableProduct', value=product.available)
+                    .col-md-4
+                        .form-group
+                            label(for="") Изображение товара
+                            p#imageLoaderError
+                            if (product.previewImg)
+                                #imageProductPreview.imageLoadButton.btn(style="background-image:url('" + product.gallery + "');")
+                            else
+                                #imageProductPreview.imageLoadButton.btn(style='background-image=url("assets/images/tovar.png")')
+                            .uploadImageButton
+                                input#uploadProductPreview(type="file" name="image" data-url="/upload/product-previews" value=product.previewImg)
+                    .col-md-12.text-right
+                        button#editProductButton.btn.btn-lg.btn-success(type='submit') Сохранить изменения
+block customjs
+    script(type='text/javascript').
+        $('#editProductButton').on('click', function(){
+        var valid=true;
+
+        // Категория каталога
+        if ($('#categoryCreateProduct select').val()) {
+           // Категория каталога выбрана - все хорош с ней
+        } else {
+           // Категория каталога не выбрана
+            $('#categoryCreateProduct').addClass('notvalid');
+            valid=false;
+        }
+
+        // Наименование товара
+        if ($('#nameCreateProduct input').val()) {
+           // Наименование товара есть
+        } else {
+           // Не указано наименование товара
+            $('#nameCreateProduct').addClass('notvalid');
+            valid=false;
+        }
+
+        // Описание товара
+        if ($('#descriptionCreateProduct textarea').val()) {
+           // Описание товара есть
+        } else {
+           // Не указано описание товара
+            $('#descriptionCreateProduct').addClass('notvalid');
+            valid=false;
+        }
+
+        // Цена товара
+        if ($('#priceCreateProduct input').val()) {
+           // Цена товара есть
+           // Теперь надо проверить чтобы было больше 0
+        } else {
+           // Не указано цена товара
+            $('#priceCreateProduct').addClass('notvalid');
+            valid=false;
+        }
+
+        // Смотрим что получилось по итогу
+            if (valid) {
+
+            } else {
+                return false;
+            }
+        });
+
+        // Убираем предупреждение с поля если пользователь его изменил
+        $('#categoryCreateProduct select').on('change', function(){
+            $('#categoryCreateProduct').removeClass('notvalid');
+        })
+        $('#nameCreateProduct input').on('change', function(){
+            $('#nameCreateProduct').removeClass('notvalid');
+        })
+        $('#descriptionCreateProduct textarea').on('change', function(){
+            $('#descriptionCreateProduct').removeClass('notvalid');
+        })
+        $('#priceCreateProduct input').on('change', function(){
+            $('#priceCreateProduct').removeClass('notvalid');
+        });
+

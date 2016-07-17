@@ -1,0 +1,193 @@
+extends layout
+block content
+    .message
+        //- var message= 'Спасибо за авторизацию'
+        if (message)
+            .alert.alert-info.alert-dismissible(role='alert')
+                button.close(type='button', data-dismiss='alert')
+                    span(aria-hidden='true') ×
+                    span.sr-only Close
+                strong= message
+    .row.maincarousel
+        .jcarousel-wrapper
+            #intro-carousel.jcarousel
+                ul
+                    li
+                        .mc-back(style='background-image: url(\'assets/images/main-banners/b16.jpg\');')
+                            .masters-banner-logo(style='left: 75%; margin-top: -85px;')
+                            h1(style='padding-left: 50%; color: rgb(255, 184, 0); font-size: 43px;')  Удивительные изделия ручной работы
+                            h1(style='font-size: 33px; margin-left: 50%; color: rgb(207, 116, 0);') от мастеров со всей России
+                    li
+                        .mc-back(style='background-image: url(\'assets/images/main-banners/b5-2.jpg\');')
+                            h1(style='color: rgb(255, 255, 255); line-height: 82px; text-shadow: 3px 3px 0px rgb(0, 0, 0); margin-top: -25px; letter-spacing: -2px; font-size: 92px;') Огромный выбор
+                            h1(style='font-size: 57px; color: rgb(255, 184, 0); line-height: 68px; text-shadow: 3px 3px 0px rgb(0, 0, 0); padding: 0 15%; letter-spacing: -2px;') товаров народного творчества
+                            h1(style='padding: 0 36%; line-height: 25px; margin-top: 8px; letter-spacing: 0px; font-size: 26px; color: rgb(255, 184, 0);') от повседневных мелочей до авторских шедевров
+                    li
+                        .mc-back(style='background-image: url(\'assets/images/main-banners/b11.jpg\');')
+                            h1(style='padding-right: 50%; font-size: 65px; line-height: 60px; color: rgb(255, 92, 61);')
+                                | Все работы
+                                br
+                                | мастеров
+                            h1(style='font-size: 51px; margin-top: 20px; color: rgb(255, 163, 0);') сделаны с душой и неповторимы
+                            p(style='margin-top: 15px; font-size: 18px; color: rgb(177, 113, 0);')  Изделия выполненные руками мастера хранят его тепло
+                    li
+                        .mc-back(style='background-image: url(\'assets/images/main-banners/b8.jpg\'); text-align: left; padding-left: 10%; padding-top: 180px;')
+                            h1(style="font-size: 64px; color: rgb(255, 61, 0); margin-bottom: 17px;") Лавка
+                            h1(style='margin-top: -14px; color: rgb(255, 61, 0); text-shadow: 1.5px 1.5px 0 black; font-weight: bold; letter-spacing: -1px;') это огромное сообщество, где
+                            h1(style='font-size: 78px; color: rgb(255, 204, 0);') мастера открыты
+                            h1(style='margin-top: 20px; color: rgb(255, 204, 0);') для общения с покупателями
+                    li
+                        .mc-back(style='background-image: url(\'assets/images/main-banners/b7-2.jpg\');')
+                            h1(style='font-size: 48px; color: rgb(255, 204, 0); line-height: 53px; text-shadow: 3px 3px black; margin-top: -16px;')
+                                | Окружите
+                                br
+                                | себя и своих близких
+                            h1(style='font-size: 64px; margin-top: 10px; color: rgb(253, 61, 0); text-shadow: 3px 3px rgb(14, 14, 14); letter-spacing: 2px;') "живыми" вещами
+                            .masters-banner-logo(style='margin-top: 0px; width: 200px; margin-left: -100px; height: 100px;')
+            a#intro-jcarousel-control-prev.jcarousel-control-prev(href='#')
+                img(src='assets/images/lef.png')
+            a#intro-jcarousel-control-next.jcarousel-control-next(href='#')
+                img(src='assets/images/righ.png')
+            p.jcarousel-pagination
+    .row.superproducts
+        h3.super-products-header  Супер предложения
+        .jcarousel-wrapper
+            #super-products-jcarousel.jcarousel
+                ul
+                    each sp in superproducts
+                        - if (highlightarray[sp._id]) {var extraclass = 'extraproduct'} else {var  extraclass=""}
+                        li(class=extraclass)
+                            a(href='/product-' + sp._id)
+                                img(src=sp.previewImg, style='width: 100%;', onError="this.onerror=null;this.src='assets/images/tovar.png';")
+                                .tovarname=sp.name
+                                .tovarCartFooter
+                                    .rating
+                                    - var parsdprice=parseInt( sp.price.replace(/\s+/g, ''))
+                                    if (isNaN(parsdprice))
+                                        .noprice
+                                            | цена
+                                            br
+                                            | не указана
+                                    else
+                                        .price= parsdprice
+                                            i.fa.fa-rub.valuta
+                            .master
+                                a(href="/workshop-" + prodWorkInfo[sp._id]._id)
+                                    .master-avatar(style="background-image:url('" + prodWorkInfo[sp._id].workshopLogo + "')")
+                                .master-works-preview
+                                    .master-works-header= prodWorkInfo[sp._id].name
+                                        //a.btn.btn-default(href='', style='display: inline-block; width: 50px; position: absolute; top: -1px; right: 10px; height: 24px; padding: 4px 5px; line-height: 16px;')
+                                    a(href='')
+                                        img(src='assets/images/tovar.png')
+                                    a(href='')
+                                        img(src='assets/images/tovar.png')
+                                    a(href='')
+                                        img(src='assets/images/tovar.png')
+                                    a(href='')
+                                        img(src='assets/images/tovar.png')
+                                    a(href='')
+                                        img(src='assets/images/tovar.png')
+            a#super-products-control-prev.jcarousel-control-prev(href='#')
+                img(src='assets/images/lef-white-bold.png', style='width: 10px;')
+            a#super-products-control-next.jcarousel-control-next(href='#')
+                img(src='assets/images/righ-white-bold.png', style='width: 10px;')
+            p.jcarousel-pagination
+    .row.newsblogs(style='box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.36);')
+        .col-md-6
+            each article,index in articles
+                - var aclass;
+                - if (index == '0') {aclass = 'active'} else {aclass=""}
+                .newsitem(class="" + aclass, id="article" + index, style="background-image: url('" + article.previewImg + "');")
+        .col-md-3
+            .article-previews
+                each article,index in articles
+                    - var aclass;
+                    - if (index == '0') {aclass = 'active'} else {aclass=""}
+                    .article-preview-item(class="" + aclass,data-article='article'+ index)
+                        h3= article.title
+                        p= article.introtext + ' '
+                            a(href="/article-" + article._id) Читать дальше
+                        hr
+        .col-md-3
+            .news-blog-ads(style='background-image: url(\'assets/images/banners/blogbanner5.jpg\'); background-size: cover; background-position: center;')
+    .row.latestAndRecomended
+        .col-md-12.col-lg-12.col-sm-12
+            .row.category
+                .col-md-12(style='background-color: rgb(255, 194, 0); color: #433030; padding: 10px; font-weight: bold; text-transform: uppercase; margin-top: 30px; margin-bottom: 20px;')
+                    h3(style='margin: 0; font-weight: bold;')  Новинки
+                each newProduct in latestProducts
+                    - if (highlightarray[newProduct._id]) {var extraclass = 'extraproduct'} else {var  extraclass=""}
+                    .col-md-2.col-lg-2.col-xs-3(class=extraclass)
+                        a(href='/product-' + newProduct._id)
+                            img(src=newProduct.previewImg, style='width: 100%;', onError="this.onerror=null;this.src='assets/images/tovar.png';")
+                            .tovarname= newProduct.name
+                            .tovarCartFooter
+                                .rating
+                                - var parsdprice=parseInt( newProduct.price.replace(/\s+/g, ''))
+                                if (isNaN(parsdprice))
+                                    .noprice
+                                        | цена
+                                        br
+                                        | не указана
+                                else
+                                    .price= parsdprice
+                                        i.fa.fa-rub.valuta
+                        .master
+                            a(href="/workshop-" + prodWorkInfo[newProduct._id]._id)
+                                .master-avatar(style="background-image:url('" + prodWorkInfo[newProduct._id].workshopLogo + "')")
+        //.col-md-6.col-lg-6.col-sm-6(style='padding-right: 30px;')
+            .row.category
+                .col-md-12(style='background-color: rgb(255, 194, 0); color: #433030; padding: 10px; font-weight: bold; text-transform: uppercase; margin-top: 30px; margin-bottom: 10px;')
+                    h3(style='margin: 0; font-weight: bold;')  Рекомендуем
+                each newProduct in latestProducts
+                    - if (highlightarray[newProduct._id]) {var extraclass = 'extraproduct'} else {var  extraclass=""}
+                    .col-md-4.col-lg-4.col-xs-6(class=extraclass)
+                        a(href='/product-' + newProduct._id)
+                            img(src=newProduct.previewImg, style='width: 100%;', onError="this.onerror=null;this.src='assets/images/tovar.png';" )
+                            .tovarname= newProduct.name
+                            .tovarCartFooter
+                                .rating
+                                .price= newProduct.price
+                        .master
+                            a(href="/workshop-" + prodWorkInfo[newProduct._id]._id)
+                                .master-avatar(style="background-image:url('" + prodWorkInfo[newProduct._id].workshopLogo + "')")
+        //img(src='assets/images/stripebanner.png', style='width: 100%;')
+    //.row.topsellers
+        .col-md-12
+            h3  Лучшие мастера
+        .col-md-3.col-lg-2.col-xs-4
+            a(href='#')
+                img(src='assets/images/tovar.png', style='width: 100%;')
+                .tovarname  Наименование мастерской
+                .tovarCartFooter
+                    | 145
+                    i.fa.fa-user
+                    | 50
+                    i.fa.fa-cube
+        .col-md-3.col-lg-2.col-xs-4
+            a(href='#')
+                img(src='assets/images/tovar.png', style='width: 100%;')
+                .tovarname  Наименование мастерской
+                .tovarCartFooter
+                    | 145
+                    i.fa.fa-user
+                    | 50
+                    i.fa.fa-cube
+        .col-md-3.col-lg-2.col-xs-4
+            a(href='#')
+                img(src='assets/images/tovar.png', style='width: 100%;')
+                .tovarname  Наименование мастерской
+                .tovarCartFooter
+                    | 145
+                    i.fa.fa-user
+                    | 50
+                    i.fa.fa-cube
+        .col-md-3.col-lg-2.col-xs-4
+            a(href='#')
+                img(src='assets/images/tovar.png', style='width: 100%;')
+                .tovarname  Наименование мастера
+                .tovarCartFooter
+                    | 145
+                    i.fa.fa-user
+                    | 50
+                    i.fa.fa-cube

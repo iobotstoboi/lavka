@@ -1,0 +1,17 @@
+extends layout
+block seotitle
+    title= 'Лавка. ' + currentArticle.title
+    meta(name="description", content=currentArticle.introtext)
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .row.maincontent
+        .col-md-12
+            h3= currentArticle.title
+            p(style="font-size: 20px;")= currentArticle.introtext
+            hr
+            .articleContent!= currentArticle.body
+            br
+            p.text-center
+                a.btn.btn-lg.btn-info(href="/") На главную
+            br
+            br

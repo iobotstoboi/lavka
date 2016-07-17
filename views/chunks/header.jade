@@ -1,0 +1,67 @@
+.row.header(style='background-color: #efefef;')
+    .col-md-3.col-lg-2.col-sm-4.col-xs-4
+        .logo
+            a(href='/')
+                .logoimg
+                .underlogo(style='')
+                    | Место встречи
+                    br
+                    span(style='font-size: 13px;')  мастеров и покупателей
+    .col-md-9.col-lg-10.col-sm-8
+        .menutabs
+            ul(style="white-space:nowrap;")
+                //li.towntab
+                    a(href='')
+                        | Ижевск
+                        span  (изменить)
+                li(class=path=='/'?'active':undefined)
+                    a(href='/')
+                        i.fa.fa-home
+                li(class=path=='/masters'?'active':undefined)
+                    a(href='/masters') Продавцу
+                //li(class=path=='/advertising'?'active':undefined)
+                    a(href='') Рекламодателю
+                li(class=path=='/info'?'active':undefined)
+                    a(href='/rules') Информация
+                li
+                        a(href='/cart') Корзина 
+                            if (cart)
+                                span= '('
+                                    span.count=cart.length
+                                span=')'
+                            else
+                               span (
+                                    span.count 0
+                                span )
+                li
+                    if (user !== null)
+                        form(method="POST", action="/logout")
+                            input(type="submit", value="Выйти")
+                    else
+                        a(href='', data-toggle='modal', data-target='#authModal') Войти
+                
+                if (user !== null)
+                    li.active.personal
+                        a(href="/personal")
+                            if (user.get('avatar'))
+                                .avatar(style="background-image:url('" + user.get('avatar') + "')")
+                            else
+                                .avatar(style="background-image:url('assets/images/avatar.jpg')")
+                            span=" " + user.get('firstName') + ' '
+                                i.fa.fa-sign-in
+.row.topbanner.mc-back(style="background-image: url('assets/images/banners/springback.jpg');height: 280px;padding-top: 50px;background-position: bottom;")
+    h1(style="padding-left: 50%; color: rgb(255, 184, 0); font-size: 43px; text-align:right;")  Удивительные изделия ручной работы
+    h1(style="font-size: 33px; margin-left: 50%; color: rgb(207, 116, 0);text-align:right;") от мастеров со всего мира
+.row
+    .col-md-12.col-lg-12.col-sm-12.horisontalmenu
+        ul
+            li
+                a(href="/catalogue", style="font-weight:bold; color:gold;") Каталог
+            if (datka)
+                each val in datka
+                    li
+                        a(href='/category-' + val.self._id)= val.self.name
+                li(style="float:right;")
+                    form(method="POST", action="/search")
+                        input(type="text", name="searchphrase", placeholder="найти", style="line-height: 32px;padding: 0 10px;color: rgb(110, 20, 20);)")
+                        input(type="submit", value="найти", style="line-height: 32px;padding: 0 10px;background-color: rgb(221, 56, 42);margin-right: -15px;")

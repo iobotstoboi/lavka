@@ -1,0 +1,75 @@
+extends managerlayout
+block seotitle
+    title= 'Панель управления | Лавка'
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    script(src='//cdn.tinymce.com/4/tinymce.min.js')
+    script.
+      tinymce.init({
+      selector: '#bodyedit',
+      height: 500,
+      plugins: [
+      "advlist autolink lists link image charmap print preview anchor",
+      "searchreplace visualblocks code fullscreen",
+      "insertdatetime media table contextmenu paste imagetools"
+      ],
+      toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+      imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
+      content_css: [
+      '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css',
+      '//www.tinymce.com/css/codepen.min.css'
+      ]
+      });
+    .content-wrapper
+        // Content Header (Page header)
+        section.content-header
+          h1.pull-left
+            | Редактировать статью
+          a.btn.btn-primary.save(style="margin-left: 15px", data-articleid=article[0]._id) Сохранить
+          ol.breadcrumb
+            li
+              a(href='#')
+                i.fa.fa-dashboard
+                |  Home
+            li.active Dashboard
+        // Main content
+        section.content
+          .row.maincontent
+            form
+                .col-md-6
+                  .form-group
+                    label Заголовок
+                    input.form-control#title(type='text', name='title', value=article[0].title)
+                  .form-group
+                    label Intro
+                    textarea.form-control#intro(name='intro', style="height: 235px")=article[0].introtext
+                .col-md-6
+                  .preview
+                    label Превью
+                    input.form-control#preview(value=article[0].previewImg)
+                    img(src=article[0].previewImg)
+                .col-md-12
+                    .form-group
+                        label Текст
+                        div
+                            textarea#bodyedit(style='width: 100%; height: 300px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;')=article[0].body
+      script(type='text/javascript').
+            $(function() { 
+            $('.save').on('click', function() {
+            var title = $('#title').val();
+            var body = tinyMCE.activeEditor.getContent();
+            var intro = $('#intro').val();
+            var preview = $('#preview').val();
+            $.ajax({
+            type: 'POST',
+            url: "/manager/articles/edit",
+            data: { id: $(this).data("articleid"), title: title, body: body, intro: intro, preview: preview },
+            success: function() {
+            alert('Saved');
+            }
+            });
+            })
+            $('#preview').on('change', function() {
+            $('.preview img').attr('src', $('#preview').val())
+            })
+            });

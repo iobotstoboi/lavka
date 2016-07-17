@@ -1,0 +1,28 @@
+//
+   Modal
+#authModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+    .modal-dialog.modal-sm
+        .modal-content
+            .modal-header
+                button.close(type='button', data-dismiss='modal')
+                    span(aria-hidden='true') ×
+                    span.sr-only Закрыть
+                h4#myModalLabel.modal-title Авторизация пользователя
+            .modal-body
+                form.login-form(method="post", action="/login", role='form', name="login-form", enctype="multipart/form-data")
+                    .form-group
+                        label(for='loginInputEmail') Ваш email
+                        input#loginInputEmail.form-control(type='email', placeholder='Введите email', name="loginInputEmail")
+                    .form-group
+                        label(for='loginInputPassword') Пароль
+                        input#loginInputPassword.form-control(type='password', placeholder='Password', name="loginInputPassword")
+                    button.btn.btn-default(type='submit') Войти
+                    .soc-auth
+                        a.vk-auth(style="", title="Войти через вконтакте" href="https://oauth.vk.com/authorize?client_id=5548425&display=page&redirect_uri=http://lavka.club/vkauth&scope=email&response_type=code&v=5.52")
+                            i.fa.fa-vk
+                    hr(style="margin-left: -15px;margin-right: -15px;")
+                    .form-group
+                        a.btn.btn-success(href="/register", style="margin-right:2px;") Регистрация
+                        a.btn.btn-warning(href='/password-reset', style="margin-right:2px;") Забыли пароль?
+                        button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
+                    span.help-block.error

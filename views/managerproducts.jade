@@ -1,0 +1,163 @@
+extends managerlayout
+block seotitle
+    title= 'Панель управления | Лавка'
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .content-wrapper
+        // Content Header (Page header)
+        section.content-header
+          h1
+            | Dashboard
+            small Control panel
+          ol.breadcrumb
+            li
+              a(href='#')
+                i.fa.fa-dashboard
+                |  Home
+            li.active Dashboard
+        // Main content
+        section.content
+          .row.maincontent
+        .col-md-9.col-lg-10.col-sm-8(style='padding-right: 30px;')
+            .row
+                if bestproducts
+                    if (bestproducts.length < 5)
+                        - var x= 12/bestproducts.length
+                        each sp in bestproducts
+                            .superius(class="col-md-" + x + " col-lg-" + x + " col-sm-" + x + " col-xs-" + x)
+                                - if (sp.url) {var url = sp.url} else {var url = '/product-' + sp._id}
+                                a.superbody(href=url)
+                                    - if (sp.gallery) {imglink = sp.gallery} else {imglink = '/assets/images/nophoto.jpg'}
+                                    .superpic(style="background-image:url('" + imglink + "')")
+                                    if (typeof(sp.img640) !== 'undefined')
+                                        img(src=sp.img640, style='display:none; width: 100%;', onError="this.onerror=null;this.src='/assets/images/tovar.png';", alt=sp.name, title=sp.name)
+                                    else
+                                        img(src=sp.previewImg, style='display:none; width: 100%;', onError="this.onerror=null;this.src='/assets/images/tovar.png';", alt=sp.name, title=sp.name)
+                                    .supertovarname=sp.name
+                                        - var parsdprice=parseInt( sp.price.replace(/\s+/g, ''))
+                                        if (isNaN(parsdprice))
+                                            .supernoprice
+                                                | цена
+                                                br
+                                                | не указана
+                                        else
+                                            .superprice= parsdprice
+                                                i.fa.fa-rub.valuta
+                                    .supertovarCartFooter
+                                        .rating
+                                .master
+                                    - if (prodWorkInfo[sp._id].alias) {var url = '/workshops/'+prodWorkInfo[sp._id].alias} else {var url = '/workshop-' + prodWorkInfo[sp._id]._id}
+                                    a(href=url)
+                                        a(href=url)
+                                        if (typeof(prodWorkInfo[sp._id].img40) !== 'undefined')
+                                            .master-avatar(style="background-image:url('" + prodWorkInfo[sp._id].img40 + "'), url('/assets/images/avatar.jpg');")
+                                        else
+                                            .master-avatar(style="background-image:url('" + prodWorkInfo[sp._id].workshopLogo + "'), url('assets/images/avatar.jpg');")
+                    else
+                        each sp,index in bestproducts
+                            - var firstline = bestproducts.length - Math.floor(bestproducts.length/4)*4;
+                            - if (index <firstline) {x=12/firstline;} else {x=12/4;}
+                            .superius(class="col-md-" + x + " col-lg-" + x + " col-sm-" + x + " col-xs-" + x)
+                                - if (sp.url) {var url = sp.url} else {var url = '/product-' + sp._id}
+                                    a.superbody(href=url)
+                                        .superpic(style="background-image:url('" + sp.gallery + "')")
+                                        if (typeof(sp.img640) !== 'undefined')
+                                            img(src=sp.img640, style='display:none; width: 100%;', onError="this.onerror=null;this.src='/assets/images/tovar.png';", alt=sp.name, title=sp.name)
+                                        else
+                                            img(src=sp.previewImg, style='display:none; width: 100%;', onError="this.onerror=null;this.src='/assets/images/tovar.png';", alt=sp.name, title=sp.name)
+                                        .supertovarname
+                                            - var parsdprice=parseInt( sp.price.replace(/\s+/g, ''))
+                                            if (isNaN(parsdprice))
+                                                .supernoprice
+                                                    | цена
+                                                    br
+                                                    | не указана
+                                            else
+                                                .superprice= parsdprice
+                                                    i.fa.fa-rub.valuta
+                                            span=sp.name
+                                        .supertovarCartFooter
+                                            .rating
+
+                                .master
+                                    - if (prodWorkInfo[sp._id].alias) {var url = '/workshops/'+prodWorkInfo[sp._id].alias} else {var url = '/workshop-' + prodWorkInfo[sp._id]._id}
+                                    a(href=url)
+                                        if (typeof(prodWorkInfo[sp._id].img40) !== 'undefined')
+                                            .master-avatar(style="background-image:url('" + prodWorkInfo[sp._id].img40 + "'), url('/assets/images/avatar.jpg');")
+                                        else
+                                            .master-avatar(style="background-image:url('" + prodWorkInfo[sp._id].workshopLogo + "'), url('/assets/images/avatar.jpg');")
+            if (bestproducts.length > 0)
+            h3(style="margin-left: -15px;")=currentCategory.name
+            each catgrooup in productTree
+                if (catgrooup.products.length > 0)
+                    .row.category
+                        h3= catgrooup.self.name
+                            if (catgrooup.self.url)
+                                a.showMoreCatalogue(href=catgrooup.self.url) Смотреть все товары категории
+                            else
+                                a.showMoreCatalogue(href='/category-' + catgrooup.self._id) Смотреть все товары категории
+                        each productincat in catgrooup.products
+                            - if (highlightarray[productincat._id]) {var extraclass = 'extraproduct'} else {var  extraclass=""}
+                            .col-md-3.col-lg-2(class=extraclass)
+                                - if (productincat.url) {var url = productincat.url} else {var url = '/product-' + productincat._id}
+                                    a(href=url)
+                                        - var imagelink;
+                                        - if (productincat.previewImg.substr(0,2) == '..') { imagelink = productincat.previewImg.substr(2);} else {imagelink = productincat.previewImg;}
+                                        img(src=imagelink, style='width: 100%;', alt=productincat.name, title=productincat.name)
+                                        .tovarname= productincat.name
+                                        - if (productincat.views) {var views = productincat.views} else {var views = 0}
+                                        .tovarCartFooter= views + ' '
+                                            i.fa.fa-eye
+                                            .rating
+                                            - var parsdprice=parseInt( productincat.price.replace(/\s+/g, ''))
+                                            if (isNaN(parsdprice))
+                                                .noprice
+                                                    | цена
+                                                    br
+                                                    | не указана
+                                            else
+                                                .price= parsdprice
+                                                    i.fa.fa-rub.valuta
+                                .master
+                                    - if (prodWorkInfo[productincat._id].alias) {var url = '/workshops/'+prodWorkInfo[productincat._id].alias} else {var url = '/workshop-' + prodWorkInfo[productincat._id]._id}
+                                    a(href=url)
+                                        if (typeof(prodWorkInfo[productincat._id].img40) !== 'undefined')
+                                            .master-avatar(style="background-image:url('" + prodWorkInfo[productincat._id].img40 + "'), url('/assets/images/avatar.jpg');")
+                                        else
+                                            .master-avatar(style="background-image:url('" + prodWorkInfo[productincat._id].workshopLogo + "'), url('/assets/images/avatar.jpg');")
+                else
+                    .row.category
+                        h3= catgrooup.self.name
+                        p(style="color: rgb(150, 133, 133);") Товары не найдены
+            if (productsMatched.length > 0)
+                br
+                .row.category
+                    each productor in productsMatched
+                        .col-md-3.col-lg-2
+                            - if (productor.url) {var url = productor.url} else {var url = '/product-' + productor._id}
+                                a(href=url)
+                                    - var imagelink;
+                                    - if (productor.previewImg.substr(0,2) == '..') { imagelink = productor.previewImg.substr(2);} else {imagelink = productor.previewImg;}
+                                    img(src=imagelink, style='width: 100%;', alt=productor.name, title=productor.name)
+                                    .tovarname= productor.name
+                                    - if (productor.views) {var views = productor.views} else {var views = 0}
+                                    .tovarCartFooter= views + ' '
+                                        i.fa.fa-eye
+                                        .rating
+                                        - var parsdprice=parseInt( productor.price.replace(/\s+/g, ''))
+                                        if (isNaN(parsdprice))
+                                            .noprice
+                                                | цена
+                                                br
+                                                | не указана
+                                        else
+                                            .price= parsdprice
+                                                i.fa.fa-rub.valuta
+                            .master
+                                - if (prodWorkInfo[productor._id].alias) {var url = '/workshops/'+prodWorkInfo[productor._id].alias} else {var url = '/workshop-' + prodWorkInfo[productor._id]._id}
+                                a(href=url)
+                                    if (typeof(prodWorkInfo[productor._id].img40) !== 'undefined')
+                                        .master-avatar(style="background-image:url('" + prodWorkInfo[productor._id].img40 + "'), url('/assets/images/avatar.jpg');")
+                                    else
+                                        .master-avatar(style="background-image:url('" + prodWorkInfo[productor._id].workshopLogo + "'), url('/assets/images/avatar.jpg');")
+                                    //(style="background-image:url('" + prodWorkInfo[productor._id].workshopLogo + "')")

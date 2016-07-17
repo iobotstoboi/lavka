@@ -1,0 +1,52 @@
+.row.header(style='background-color: #efefef;')
+    .col-md-3.col-lg-2.col-sm-4
+        .logo
+            a(href='/')
+                .logoimg
+                .underlogo(style='')
+                    | Место встречи
+                    br
+                    span(style='font-size: 13px;')  мастеров и покупателей
+    .col-md-9.col-lg-10.col-sm-8
+        .menutabs
+            ul(style="white-space:nowrap;")
+                //li.towntab
+                    a(href='')
+                        | Ижевск
+                        span  (изменить)
+                li(class=path=='/'?'active':undefined)
+                    a(href='/')
+                        i.fa.fa-home
+                li(class=path=='/masters'?'active':undefined)
+                    a(href='/masters') Продавцу
+                //li(class=path=='/advertising'?'active':undefined)
+                    a(href='') Рекламодателю
+                li(class=path=='/info'?'active':undefined)
+                    a(href='/rules') Информация
+                li
+                        a(href='/cart') Корзина 
+                            if (cart)
+                                span= '('
+                                    span.count=cart.length
+                                span=')'
+                            else
+                                span (
+                                    span.count 0
+                                span )
+                li
+                    if (user !== null)
+                        form(method="POST", action="/logout")
+                            input(type="submit", value="Выйти")
+                    else
+                        a(href='', data-toggle='modal', data-target='#authModal') Войти
+                
+                if (user !== null)
+                    li.active.personal
+                        a(href="/personal")
+                            if (user.get('avatar'))
+                                .avatar(style="background-image:url('" + user.get('avatar') + "')")
+                            else
+                                .avatar(style="background-image:url('assets/images/avatar.jpg')")
+                            span=" " + user.get('firstName') + ' '
+                                i.fa.fa-arrow-right
+.row.topbanner(style="background-image:url('assets/images/banners/regularback.jpg');background-position: top;")

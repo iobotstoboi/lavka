@@ -1,0 +1,27 @@
+extends layout
+block seotitle
+    title= 'Лавка. Страница изменения пароля'
+    meta(name="description", content="Лавка. Изменение пароля ")
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .row.maincontent
+        .col-md-12
+            h3 Изменение пароля
+            br
+            form(role='form', method='POST', action='/reset', name="resetpass-form", enctype="multipart/form-data")
+                input(type="hidden", name="token", value=''+token.token)
+                input(type="hidden", name="email", value=''+token.data)
+                input(type="hidden", name="type", value=''+token.type)
+                input(type="hidden", name="tokenid", value=''+token._id)
+                .form-group
+                    label(for='email') Новый пароль
+                    input#pass.form-control(type='password', name='password', style="max-width:300px;")
+                .form-group
+                    label(for='email') Подтверждение пароля
+                    input#passConfirm.form-control(type='password', name='confirmpassword', style="max-width:300px;")
+                button.btn.btn-lg.btn-info(type='submit') Изменить пароль
+            br
+            p.text-center
+                a.btn.btn-lg.btn-info(href="/") На главную
+            br
+            br

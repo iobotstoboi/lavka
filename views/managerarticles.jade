@@ -1,0 +1,49 @@
+extends managerlayout
+block seotitle
+    title= 'Панель управления | Лавка'
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .content-wrapper
+        // Content Header (Page header)
+        section.content-header
+          h1(style="float:left")
+            | Статьи
+          a.btn.btn-primary.save(style="margin-left: 15px" href="/manager/articles/create") Написать
+          ol.breadcrumb
+            li
+              a(href='#')
+                i.fa.fa-dashboard
+                |  Home
+            li.active Dashboard
+        // Main content
+        section.content
+            - for (var x = 0; x < Object.keys(articles).length; x++)
+                    .card.col-md-2
+                        span.delete(data-articleid=articles[x]._id) ×
+                        a(href="/manager/articles-" + articles[x]._id + "/edit")
+                            div(style="background: url('"+articles[x].previewImg+"');height:125px;background-size:cover;background-position:center;" class="img-responsive")
+                        a(href="/manager/articles-" + articles[x]._id + "/edit")
+                            h4=articles[x].title
+                        p.date=articles[x].created.getDate()+', '+articles[x].created.getMonth()+', '+articles[x].created.getFullYear()
+        .alerts
+
+        script(type='text/javascript').
+            $(function() { 
+            $('.delete').on('click', function() {
+            var card = $(this).parent();
+            var articleId = $(this).data("articleid");
+            console.log(articleId);
+            $('.alerts').html('<div class="alert alert-danger "><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Вы действительно хотите удалить элемент? <a class="btn btn-danger" id="delete-confirm">Удалить</a></div>');
+            $('#delete-confirm').on('click', function() {
+            $.ajax({
+            type: 'POST',
+            url: "/manager/articles",
+            data: { articleId: articleId, oper: "delete" },
+            success: function() {
+            card.fadeOut();
+            $('.alert-danger').alert('close')
+            }
+            });
+            });
+            });
+            });

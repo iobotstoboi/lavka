@@ -1,0 +1,87 @@
+.row.footer
+    .col-md-6
+        h1  Каталог
+        hr
+        .row.footercat
+            - function isOdd(num) { return num % 2;}
+            .col-md-6
+                ul
+                    if (datka)
+                        each val,index in datka
+                            if (!isOdd(index))
+                                li
+                                    a(href='/category-' + val.self._id)= val.self.name
+            .col-md-6
+                ul
+                    if (datka)
+                        each val,index in datka
+                            if (isOdd(index))
+                                li
+                                    a(href='/category-' + val.self._id)= val.self.name
+    .col-md-6
+        .row
+            .col-md-4.footerinfo
+                h1  Информация
+                hr
+                ul
+                    li
+                        a(href='/') Покупателю
+                    li
+                        a(href='/masters') Продавцу
+                    li
+                        a(href='/rules') Правила
+                    li
+                        a(href='/contacts') Контакты
+                    li
+                        a(href='/register') Регистрация
+            .col-md-8.footercontacts
+                .footer-logo
+                    a(href='/')
+                        .logoimg
+                        .underlogo
+                            | Место встречи
+                            br
+                            | мастеров и покупателей
+                h1
+                    | 8 (000)
+                    b 000-00-00
+                p  info@lavka.club
+                .socials.text-center
+                    a(href='http://vk.com/lavka.club', rel="nofollow")
+                        img(src="http://upload.wikimedia.org/wikipedia/commons/thumb/2/21/VK.com-logo.svg/2000px-VK.com-logo.svg.png", style="width: 17px;margin-top: -7px;border-radius: 2px;box-shadow: 1px 1px black;margin-right:5px;")
+                    a(href='http://ok.ru/group/53405794959475', rel="nofollow")
+                        img(src="/assets/images/odnoklassinki.png", style="width: 17px;margin-top: -7px;border-radius: 2px;box-shadow: 1px 1px black;")
+                    a(href='http://lavkaclub.tumblr.com', rel="nofollow")
+                        i.fa.fa-tumblr-square
+                    a(href='http://instagram.com/lavka.club', rel="nofollow")
+                        i.fa.fa-instagram
+                    a(href='http://google.com/+lavkaclubcompany', rel="nofollow")
+                        i.fa.fa-google-plus-square
+                    a(href='https://www.facebook.com/profile.php?id=100008920725259', rel="nofollow")
+                        i.fa.fa-facebook-square
+    .col-md-12.partners
+        .row
+            .col-md-12(style="border-bottom: 2px solid rgba(255, 58, 58, 0.48);margin-bottom: 15px;")
+                h3 Наши партнеры
+            .col-md-12
+                .text-right
+                    a(href="/assets/docs/discount-0109sm.pdf", style="font-size:24px;", target="_blank")
+                        img(src="/assets/images/icon_PDF.png", style="height: 50px;margin-right: 10px;")
+                        | Предложение для рекламодателей
+            //.col-sm-2
+                a(href="http://c.cpl1.ru/7KQY", rel="nofollow")
+                    img(src="/assets/images/partners/krkub2.png", style="width:100%;")
+            //.col-sm-2
+                a(href="https://vk.com/saharspace", rel="nofollow")
+                    img(style="width:100%;", src="/assets/images/partners/sahar3.png")
+            //.col-sm-2
+                a(href="http://c.cpl1.ru/7L62", rel="nofollow")
+                    img(style="width:100%;", src="/assets/images/partners/alessandrofrenza.png")
+            //.col-sm-2
+                a(href="http://c.cpl1.ru/7KSG", rel="nofollow")
+                    img(style="width:100%;", src="/assets/images/partners/mrdom.png")
+    .col-md-12.cprt
+        p Copyright © 2014
+            span(style="float:right;")
+                a(href="http://frutini.com", style="color:gold;letter-spacing: -2px;font-size: 20px;line-height: 18px;text-shadow: 3px 3px 0px black;")
+                    strong FRUTINI

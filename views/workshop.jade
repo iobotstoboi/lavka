@@ -1,0 +1,94 @@
+extends layoutCut
+block seotitle
+    title= 'Лавка. ' + workshoptocustomer.name
+    meta(name="description", content=workshoptocustomer.description.substr(0, 200))
+    - var keywords=''
+    each product in matchedProducts
+        - keywords += ", " + product.name
+    - keywords = workshoptocustomer.name + ' ' + keywords
+    meta(name="keywords", content=keywords.substr(0, 200))
+block content
+    if (user != null)
+        #sendMessage.modal.fade(tabindex="-1", role="dialog", aria-labelledby="mySmallModalLabel", aria-hidden="true")
+            .modal-dialog
+                .modal-content(style="background-color: rgb(134, 92, 92);")
+                    .modal-header
+                        h4.modal-title Отправить сообщение мастеру
+                    .modal-body
+                        form#sendMessageForm
+                            .row
+                                .col-md-12
+                                    .form-group
+                                        label Название мастерской
+                                        input.form-control(type="text", value=workshoptocustomer.name, readonly="readonly")
+                                        input#user2Id(type="hidden", value=workshoptocustomer._userAccountId)
+                                        input#user1Id(type="hidden", value=user.get('id'))
+                                        input#user1Name(type="hidden", value=user.get('firstName'))
+                                    .form-group
+                                        label Текст сообщения
+                                        textarea#messageBody.form-control
+                                .col-md-12.text-right
+                                    button.btn.btn-lg.btn-info#sendMessageSubmit(type='submit') Отправить
+    .row.maincontent
+        .col-md-3.col-lg-2.col-sm-4.sidebar
+            .sbmenu
+                ul
+                    li.sbmenuhdr
+                        a(href='/catalogue') Каталог
+                    if (datka)
+                        each val in datka
+                            li
+                                a(href='/category-'+val.self._id)= val.self.name
+            .sbadv
+                img(src='assets/images/lavka-ads1.jpg', style='width: 100%;')
+        .col-md-9.col-lg-10.col-sm-8(style='padding-right: 30px;')
+            .row
+                .col-md-4
+                    if (typeof(workshoptocustomer.img640) !== 'undefined')
+                        img(src=workshoptocustomer.img640, style="width:100%;", onError="this.onerror=null;this.src='assets/images/avatar.jpg';")
+                    else
+                        img(src=workshoptocustomer.workshopLogo, style="width:100%;", onError="this.onerror=null;this.src='assets/images/avatar.jpg';")
+
+                .col-md-8
+                    h3
+                        span(style="color:rgb(255,150,150);font-size: 18px;") Мастерская:
+                        br
+                        strong=workshoptocustomer.name
+                        if (user != null)
+                            span
+                                a.write_message.btn.btn-info(href='#' style='margin-left:5px;' data-toggle='modal', data-target='#sendMessage') Написать продавцу 
+                                i.fa.fa-pencil
+                    p=workshoptocustomer.adres
+                    hr
+                    p=workshoptocustomer.description
+                .col-md-12
+                    hr
+            .row.category(style="margin-left:0;")
+                h3 Товары мастерской
+                    strong=' ' + workshoptocustomer.name
+                each product in matchedProducts
+                    - if (highlightarray[product._id]) {var extraclass = 'extraproduct'} else {var  extraclass=""}
+                    if (product.active == 'true')
+                        .col-md-3.col-lg-2(class=extraclass)
+                            - if (product.url) {var url = product.url} else {var url = '/product-' + product._id}
+                            a(href=url)
+                                img(src=product.previewImg, style='width: 100%;', onError="this.onerror=null;this.src='assets/images/tovar.png';")
+                                .tovarname= product.name
+                                - if (product.views) {var views = product.views} else {var views = 0}
+                                .tovarCartFooter= views + ' '
+                                    i.fa.fa-eye
+                                    .rating
+                                    - var parsdprice=parseInt( product.price.replace(/\s+/g, ''))
+                                    if (isNaN(parsdprice))
+                                        .noprice
+                                            | цена
+                                            br
+                                            | не указана
+                                    else
+                                        .price= parsdprice
+                                            i.fa.fa-rub.valuta
+                            .master
+                                if (typeof(prodWorkInfo[product._id].img40) !== 'undefined')
+                                    .master-avatar(style="background-image:url('" + prodWorkInfo[product._id].img40 + "'), url('assets/images/avatar.jpg');")
+                                else
+                                    .master-avatar(style="background-image:url('" + prodWorkInfo[product._id].workshopLogo + "'), url('assets/images/avatar.jpg');")

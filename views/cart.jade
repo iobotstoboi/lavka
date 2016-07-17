@@ -1,0 +1,108 @@
+extends layout
+block seotitle
+    title= 'Лавка. Корзина'
+    meta(name="description", content="Лавка. Корзина")
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .modal.fade#orderCartModal(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
+                    .modal-dialog
+                        .modal-content
+                            .modal-header
+                                button.close(type="button", data-dismiss="modal")
+                                    span(aria-hidden="true") &times;
+                                    span.sr-only Закрыть
+                                h4.modal-title#myModalLabel Заказ изделия
+                            .modal-body
+                                if (user !== null)
+                                    .row
+                                        .products
+                                        .col-md-12.col-sm-12.col-xs-12.col-lg-12
+                                            p
+                                                strong= user.get('firstName') + ' ' + user.get('secondName') + ', '
+                                                | от Вашего имени будет отправлен заказ в мастерские
+                                                | .&nbsp;
+                                            p После получения заказа с Вами свяжутся сотрудники мастерской.
+                                            form#multiOrder
+                                                input(type="hidden",name="userid", value=""+user.get('_id'))
+                                                input(type="hidden", name="productid", value="")
+                                                .form-group
+                                                    textarea.form-control(style="resize:none;", name="comment", placeholder="Введите комментарий к заказу")
+                                                p.text-right
+                                                    button.btn.btn-lg.btn-success(type="submit")
+                                                        strong Заказать
+                                else
+                                    .row
+                                        .products
+                                        .col-md-12.col-sm-12.col-xs-12.col-lg-12
+                                            p Для совершения заказа вам необходимо
+                                                a(href='', data-toggle='modal', data-target='#authModal')
+                                                    i(style="color:rgb(250,190,190);")= " авторизоваться "
+                                                | или заполнить форму ниже
+                                            p(style="line-height:14px; font-size:13px; color:rgb(240,230,230)")
+                                                i Мастерской потребуются Ваши контактные данные для обратной связи с Вами.
+                                            form#multiOrderNewUser
+                                                input(type="hidden", name="productid", value="")
+                                                .form-group#newUserFirstNameInput
+                                                    label(for='firstNameInput') Ваше имя
+                                                        span.notValidMessage Укажите Ваше имя
+                                                    input#firstNameInput.form-control(type='text', name='firstNameInput', placeholder='Введите ваше имя')
+                                                .form-group#newUserSecondNameInput
+                                                    label(for='secondNameInput') Ваша фамилия
+                                                        span.notValidMessage Укажите Вашу Фамилию
+                                                    input#secondNameInput.form-control(type='text', name='secondNameInput', placeholder='Введите вашу фамилию')
+                                                .form-group#newUserEmailInput
+                                                    label(for='emailInput') Email
+                                                        span.tooltipster(data-tooltip="Этот email Вы будете использовать в дальнейшем для авторизации на сайте") &nbsp;<i class="fa fa-question-circle"></i>
+                                                        span.notValidMessage Укажите Ваш email
+                                                    input#emailInput.form-control(type='email', name='emailInput', placeholder='Введите email')
+                                                .form-group
+                                                    label(for='phoneInput') Контактный телефон
+                                                        span.tooltipster(data-tooltip="Ваш телефон потребуется только для связи мастерской с Вами, и не будет использоваться в других целях") &nbsp;<i class="fa fa-question-circle"></i>
+                                                    input#emailInput.form-control(type='phone', name='phoneInput', placeholder='Введите номер телефона')
+                                                .form-group#newUserPasswordInput
+                                                    label(for='passwordInput') Пароль
+                                                        span.tooltipster(data-tooltip="Этот пароль Вы будете использовать в дальнейшем для авторизации на сайте") &nbsp;<i class="fa fa-question-circle"></i>
+                                                        span.notValidMessage Укажите пароль
+                                                    input#passwordInput.form-control(type='password', name='passwordInput', placeholder='Password')
+                                                .checkbox(style="color: white;border-top: 1px solid rgba(192, 192, 192, 0.23);padding-top: 5px;border-bottom: 1px solid rgba(192, 192, 192, 0.17);padding-bottom: 5px;")
+                                                    label
+                                                        input#termsOfUseInput(type='checkbox', name='termsOfUseInput')
+                                                        | Принимаю условия сервиса
+                                                .form-group
+                                                    textarea.form-control(style="resize:none;", name="comment", placeholder="Введите комментарий к заказу")
+                                                p.text-right
+                                                    button#orderAndCreateUserButton.btn.btn-lg.btn-success(type="submit")
+                                                        strong Заказать
+    .row.maincontent.category.products-list.cart-list
+        h1 Корзина
+        - if (cart != undefined)
+            .productsincart
+                each newFav in cart
+                                        .col-md-3.col-lg-2.col-xs-3(id=newFav._id)
+                                            - if (newFav.url) {var url = newFav.url} else {var url = '/product-' + newFav._id}
+                                            a(href=url)
+                                                - var nevimagelink;
+                                                - if (newFav.previewImg.substr(0,2) == '..') { nevimagelink = newFav.previewImg.substr(2);} else {nevimagelink = newFav.previewImg;}
+                                                img(src=nevimagelink, style='width: 100%;', onError="this.onerror=null;this.src='assets/images/tovar.png';", alt=newFav.name, title=newFav.name)
+                                                .tovarname= newFav.name
+                                                - if (newFav.views) {var views = newFav.views} else {var views = 0}
+                                                .tovarCartFooter= views + ' '
+                                                    i.fa.fa-eye
+                                                    .rating
+                                                    - var parsdprice=parseInt( newFav.price.replace(/\s+/g, ''))
+                                                    if (isNaN(parsdprice))
+                                                        .noprice
+                                                            | цена
+                                                            br
+                                                            | не указана
+                                                    else
+                                                        .price= parsdprice
+                                                            i.fa.fa-rub.valuta
+                                            .controls
+                                                    button.btn.btn-sm.btn-danger.removeCartButton.tooltipster(data-toggle="modal", data-target="#removeProductModal", data-identirier='' + newFav._id, data-productimage=newFav.previewImg, data-productname=newFav.name, data-tooltip="Удалить товар из корзины") <i class="fa fa-times"></i>
+            .row
+                .cart-buttons
+                    a.btn.btn-info.btn-lg.btnCartConfirm(data-toggle="modal" data-target="#orderCartModal") ОФОРМИТЬ ЗАКАЗ
+                    a.btn.btn-danger.btn-lg.clearCart(style="margin-left:10px;") ОТЧИСТИТЬ КОРЗИНУ
+        - else
+            p Ваша корзина пуста

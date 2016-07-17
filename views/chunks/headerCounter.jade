@@ -1,0 +1,76 @@
+.row.header(style='background-color: #efefef;')
+    .col-md-3.col-lg-2.col-sm-4.col-xs-4
+        .logo
+            a(href='/')
+                .logoimg
+                .underlogo(style='')
+                    | Место встречи
+                    br
+                    span(style='font-size: 13px;')  мастеров и покупателей
+    .col-md-9.col-lg-10.col-sm-8
+        .menutabs
+            ul(style="white-space:nowrap;")
+                //li.towntab
+                    a(href='')
+                        | Ижевск
+                        span  (изменить)
+                li(class=path=='/'?'active':undefined)
+                    a(href='/')
+                        i.fa.fa-home
+                li(class=path=='/masters'?'active':undefined)
+                    a(href='/masters') Продавцу
+                //li(class=path=='/advertising'?'active':undefined)
+                    a(href='') Рекламодателю
+                li(class=path=='/info'?'active':undefined)
+                    a(href='/rules') Информация
+                li
+                        a(href='/cart') Корзина 
+                            if (cart)
+                                span= '('
+                                    span.count=cart.length
+                                span=')'
+                            else
+                                span (
+                                    span.count 0
+                                span )  
+                li
+                    if (user !== null)
+                        form(method="POST", action="/logout")
+                            input(type="submit", value="Выйти")
+                    else
+                        a(href='', data-toggle='modal', data-target='#authModal') Войти
+                if (user !== null)
+                    li.active.personal
+                        a(href="/personal")
+                            if (user.get('avatar'))
+                                .avatar(style="background-image:url('" + user.get('avatar') + "')")
+                            else
+                                .avatar(style="background-image:url('assets/images/avatar.jpg')")
+                            span=" " + user.get('firstName') + ' '
+                                i.fa.fa-sign-in
+.row.topbanner.mc-back(style="background-image: url('assets/images/banners/springback.jpg');height: 355px;padding-top: 50px;background-position: bottom;")
+    h1(style="padding-left: 50%; color: rgb(255, 184, 0); font-size: 43px; text-align:right;")  Удивительные изделия ручной работы
+    h1(style="font-size: 33px; margin-left: 50%; color: rgb(207, 116, 0);text-align:right;") от мастеров со всего мира
+    div(style="text-align: right;")
+        span(style="vertical-align:top; display: inline-block;  /* background-color: rgba(0, 187, 255, 0.4); */  padding: 10px;  margin-top: 10px; margin-right: -53px; padding-right: 120px;border-radius: 3px;background-image: url(http://img1.liveinternet.ru/images/attach/c/10/111/383/111383517_0_871c1_614bd62d_L.png);background-size: contain;background-image: url(http://info.3k.mail.ru/info/pictures/image/sunduk1.png);background-position: center;background-repeat: no-repeat;background-image: url(http://sundukpirata.com/Design/Shapka/sunduk.png);/* background-image: url(http://fabrikagu.ru/santa/img/sunduk.png); */background-position: 104% top; width: 290px;")
+            p(style="font-size: 32px; margin: 0; line-height: 24px; /* font-weight: bold; */ letter-spacing: -2px; color: white;/* text-shadow: 2px 2px 2px black; */text-align: center;  display: block;/* margin-bottom: -10px; *//* margin-top: 10px; */font-family: Open Sans Condensed;") &#1058;&#1086;&#1074;&#1072;&#1088;&#1086;&#1074;
+            span(style="font-size: 60px;display: block;font-family: Lobster;font-weight: bold;text-shadow: none;color: rgb(255, 69, 54);text-align: center;  display: block;/* text-shadow: 2px 2px 2px black; */background-color: white;  margin: 8px auto;  width: 150px;  line-height: 70px;  box-shadow: inset 0 -40px 50px -50px black, inset 0 40px 50px -50px black;  border-radius: 3px;")= productscount
+            p(style="font-size: 32px; margin: 0; line-height: 24px; /* font-weight: bold; */ letter-spacing: -2px; color: white;/* text-shadow: 2px 2px 2px black; */text-align: center;  display: block;font-family: Open Sans Condensed;/* margin-bottom: 10px; */  /* margin-top: -10px; */") &#1085;&#1072; &#1089;&#1072;&#1081;&#1090;&#1077;
+        span(style=" display: inline-block; padding: 10px;   margin-top: 10px;    border-radius: 3px; background-size: contain;    background-repeat: no-repeat;    background-position: 154% top; width: 200px; ")
+            p(style="font-size: 29px; margin: 0; line-height: 24px; /* font-weight: bold; */ letter-spacing: 0px; color: white;/* text-shadow: 2px 2px 2px black; */text-align: center;  display: block;font-family: Open Sans Condensed;") &#1052;&#1072;&#1089;&#1090;&#1077;&#1088;&#1086;&#1074;
+            span(style="font-size: 60px;    font-family: Lobster;    text-shadow: none;    color: rgb(255, 87, 0);    font-weight: bold;text-align: center;display: block;background-color: white;margin: 8px auto;width: 150px;line-height: 70px;box-shadow: inset 0 -40px 50px -50px black, inset 0 40px 50px -50px black;border-radius: 3px;")= workshopcount
+            p(style="font-size: 29px; margin: 0; line-height: 24px; /* font-weight: bold; */ letter-spacing: 0px; color: white;/* text-shadow: 2px 2px 2px black; */text-align: center;  display: block;font-family: Open Sans Condensed;") &#1085;&#1072; &#1089;&#1072;&#1081;&#1090;&#1077;
+
+.row
+    .col-md-12.col-lg-12.col-sm-12.horisontalmenu
+        ul
+            li
+                a(href="/catalogue", style="font-weight:bold; color:gold;") Каталог
+            if (datka)
+                each val in datka
+                    li
+                        a(href='/category-' + val.self._id)= val.self.name
+                li(style="float:right;")
+                    form(method="POST", action="/search")
+                        input(type="text", name="searchphrase", placeholder="найти", style="line-height: 32px;padding: 0 10px;color: rgb(110, 20, 20);)")
+                        input(type="submit", value="найти", style="line-height: 32px;padding: 0 10px;background-color: rgb(221, 56, 42);margin-right: -15px;")

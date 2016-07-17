@@ -1,0 +1,159 @@
+extends layout
+block seotitle
+    title= 'Лавка. Страница оплаты'
+    meta(name="description", content="Лавка. Страница оплаты")
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .row.maincontent(style="background-image: url('assets/images/back1.jpg');background-size: cover;background-position: top;background-repeat: no-repeat;")
+        .col-md-12.headerOnProductPage
+            h3= user.get('firstName') + ' ' + user.get('secondName')
+                span(style="float:right; font-weight:normal;")= 'Ваш баланс: '
+                    strong= user.get('balance') + ' р.'
+        .col-md-12
+            h3.text-center(style="font-family: Lobster;font-size: 53px;color: rgb(255, 60, 60);font-weight: normal;") Продавайте больше!
+                span.substring(style="font-size:24px; margin-top:-5px;color: rgb(255, 173, 0);") Вместе с Лавкой
+            if (message)
+                .alert.alert-warning.alert-dismissible(role='alert')
+                    button.close(type='button', data-dismiss='alert')
+                        span(aria-hidden='true') ×
+                        span.sr-only Close
+                    strong= message
+
+        .col-md-6
+            h3 Пополнение счета
+            .infogroup
+                h4.infogroup-header
+                    strong ВВЕСТИ ПРОМОКОД
+                p Вы можете пополнить счет если у вас есть промокод
+                form(method="POST", action="/activate-promocode", role='form', name="activatePromocode", enctype="multipart/form-data")
+                    input(type="hidden", name="checkinput", value="")
+                    .form-group
+                        label Промокод
+                        input.form-control(type="text", placeholder='Введите промокод', name='promocode')
+                    .form-group
+                        label Email
+                        input.form-control(type="email", placeholder='Введите email', name='email', value=user.get('username'))
+                    p Средства будут начислены на счет пользователя
+                        strong= ' ' + user.get('firstName') + ' ' + user.get('secondName') + ' '
+                        | мастерской
+                        strong= ' ' + workshop.get('name')
+                    p.text-right
+                        button.btn.btn-lg.btn-danger
+                            strong(style="text-shadow:1px 1px 3px black; font-size:20px; ") Использовать промокод
+            .infogroup
+                h4.infogroup-header
+                    strong ПОПОЛНИТЬ СЧЕТ
+                p Вы можете пополнить любым удобным для вас способом из представленных ниже
+                    br
+                    | Введите сумму, которую вы готовы оплатить
+                form(type="form", method="POST", action="https://www.walletone.com/checkout/default.aspx", accept-charset="UTF-8")
+                    .form-group
+                        label Сумма
+                        input.form-control(name="WMI_PAYMENT_AMOUNT", type='text', value="500", placeholder="Введите сумму")
+                    input( name="WMI_MERCHANT_ID", value="186655772283", type="hidden")
+                    input( name="WMI_CURRENCY_ID", value="643", type="hidden")
+                    input( name="WMI_DESCRIPTION", value="Пополнение баланса на сайте lavka.club", type="hidden")
+                    input( name="WMI_SUCCESS_URL", value="http://lavka.club/success-payment", type="hidden")
+                    input( name="WMI_FAIL_URL", value="https://lavka.club/failed-payment", type="hidden")
+                    input( name="WMI_CUSTOMER_EMAIL", value="" + user.get('username'), type="hidden")
+                    //input( name="WMI_CUSTOMER_FIRSTNAME", value="" + user.get('firstName'), type="hidden")
+                    //input( name="WMI_CUSTOMER_LASTNAME", value="" + user.get('secondName'), type="hidden")
+                    input( name="userid", type="hidden", value="" + user.get('_id'))
+                    p.text-right
+                        button.btn.btn-lg.btn-success
+                            strong(style="text-shadow:1px 1px 3px black;font-size:20px;") Оплатить сейчас
+            //.infogroup
+                h4.infogroup-header
+                    strong ПОПОЛНИТЬ СЧЕТ
+                p Вы можете пополнить любым удобным для вас способом из представленных ниже
+                    br
+                    | Введите сумму, которую вы готовы оплатить
+                form(method="POST", action="/deposite")
+                    .form-group
+                        label Сумма
+                        input.form-control(name="WMI_PAYMENT_AMOUNT", type='text', value="500", placeholder="Введите сумму")
+                    input( name="WMI_MERCHANT_ID", value="186655772283", type="hidden")
+                    input( name="WMI_CURRENCY_ID", value="643", type="hidden")
+                    input( name="WMI_DESCRIPTION", value="Пополнение баланса на сайте lavka.club", type="hidden")
+                    input( name="WMI_SUCCESS_URL", value="http://lavka.club/success-payment", type="hidden")
+                    input( name="WMI_FAIL_URL", value="https://lavka.club/failed-payment", type="hidden")
+                    input( name="WMI_CUSTOMER_EMAIL", value="" + user.get('username'), type="hidden")
+                    input( name="WMI_CUSTOMER_FIRSTNAME", value="" + user.get('firstName'), type="hidden")
+                    input( name="WMI_CUSTOMER_LASTNAME", value="" + user.get('secondName'), type="hidden")
+                    p.text-right
+                        button.btn.btn-lg.btn-success
+                            strong(style="text-shadow:1px 1px 3px black;font-size:20px;") Оплатить сейчас
+        .col-md-6
+            h3 На что потратить
+            .infogroup
+                h4.infogroup-header
+                    strong Выделить товары
+                p Услуга позволяет выделить ваши товары в списке
+                .row.category
+                    .col-md-4.col-lg-4.col-xs-4
+                        a(href='')
+                            img(src='assets/images/tovar2.png', style='width: 100%;')
+                            .tovarname Обычный товар
+                            .tovarCartFooter
+                                .rating
+                                .price Цена
+                        .master
+                            a(href="")
+                                .master-avatar(style="background-image:url('assets/images/avatar.jpg')")
+                    .col-md-4.col-lg-4.col-xs-4.extraproduct
+                        a(href='')
+                            img(src='assets/images/tovar2.png', style='width: 100%;')
+                            .tovarname Выделенный товар
+                            .tovarCartFooter
+                                .rating
+                                .price Цена
+                        .master
+                            a(href="")
+                                .master-avatar(style="background-image:url('assets/images/avatar.jpg')")
+                    .col-md-4.col-lg-4.col-xs-4
+                        p.text-center
+                            button.btn.btn-danger(style="margin-right: 10px;padding: 0px 10px 5px 10px; margin: 0 0 3px 0;width: 100%;")
+                                strong(style="font-size: 40px; text-shadow: 1px 1px 3px black;") x3
+                                        span.substring Просмотры
+                            button.btn.btn-info(style="margin-right: 10px;padding: 0px 10px 5px 10px; margin: 0 0 3px 0;width: 100%;")
+                                strong(style="font-size: 40px; text-shadow: 1px 1px 3px black;") 10
+                                    span.substring дней
+                            button.btn.btn-success(style="margin-right: 10px;padding: 0px 10px 5px 10px; margin: 0 0 3px 0;width: 100%;")
+                                strong(style="font-size: 40px; text-shadow: 1px 1px 3px black;") 50
+                                    span.substring рублей
+            .infogroup
+                h4.infogroup-header
+                    strong СУПЕР ПРЕДЛОЖЕНИЯ
+                .row.best-cat(style="position:relative; margin: 20px 20px; color:rgb(75,66,66);")
+                    .best-cat-header(style="margin-top: -20px;margin-left: -21px;") СУПЕР ПРЕДЛОЖЕНИЯ
+                    p Разместите ваши товары на самом видном месте - там их точно заметят!
+                        br
+                        | Блок суперпредложений размещается на главной странице и стартовой странице каталога.
+                    p.text-center
+                        button.btn.btn-danger(style="margin-right: 10px;padding: 0px 10px 5px 10px; margin: 0 10px 3px 0;")
+                            strong(style="font-size: 40px; text-shadow: 1px 1px 3px black;") x10
+                                span.substring Просмотры
+                        button.btn.btn-info(style="margin-right: 10px;padding: 0px 10px 5px 10px; margin: 0 10px 3px 0;")
+                            strong(style="font-size: 40px; text-shadow: 1px 1px 3px black;") 10
+                                span.substring дней
+                        button.btn.btn-success(style="margin-right: 10px;padding: 0px 10px 5px 10px; margin: 0 10px 3px 0;")
+                            strong(style="font-size: 40px; text-shadow: 1px 1px 3px black;") 150
+                                span.substring рублей
+            .infogroup
+                h4.infogroup-header
+                    strong ЛУЧШЕЕ ПРЕДЛОЖЕНИЕ
+                .row.best-cat(style="position:relative; margin: 20px 20px; color:rgb(75,66,66);")
+                    .best-cat-header(style="margin-top: -20px;margin-left: -21px;") ЛУЧШИЕ ПРЕДЛОЖЕНИЯ
+                    p Разместите ваши товары на самом видном месте в соответствующем разделе каталога
+                        br
+                        | Блок лучших предложений размещается в самом видном месте страницы с товарами категории каталога
+                    p.text-center
+                        button.btn.btn-danger(style="margin-right: 10px;padding: 0px 10px 5px 10px; margin: 0 10px 3px 0;")
+                            strong(style="font-size: 40px; text-shadow: 1px 1px 3px black;") x5
+                                span.substring Просмотры
+                        button.btn.btn-info(style="margin-right: 10px;padding: 0px 10px 5px 10px; margin: 0 10px 3px 0;")
+                            strong(style="font-size: 40px; text-shadow: 1px 1px 3px black;") 10
+                                span.substring дней
+                        button.btn.btn-success(style="margin-right: 10px;padding: 0px 10px 5px 10px; margin: 0 10px 3px 0;")
+                            strong(style="font-size: 40px; text-shadow: 1px 1px 3px black;") 80
+                                span.substring рублей

@@ -1,0 +1,919 @@
+extends layoutCut
+block seotitle
+    title= 'Лавка. Личный кабинет мастерской'
+    meta(name="description", content="Лавка. Личный кабинет мастерской")
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .message
+        //- var message= 'Спасибо за авторизацию'
+        if (message)
+            .alert.alert-info.alert-dismissible(role='alert')
+                button.close(type='button', data-dismiss='alert')
+                    span(aria-hidden='true') ×
+                    span.sr-only Close
+                strong= message
+    #createWorkshopAliasModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="mySmallModalLabel", aria-hidden="true")
+        .modal-dialog
+            .modal-content(style="background-color: rgb(134, 92, 92);")
+                .modal-header
+                    h4.modal-title Необходимо выбрать псевдоним вашей мастерской
+                .modal-body
+                    form#createWorkshopAliasForm(role='form', method='POST', action='/add-alias', name="createProduct", enctype="multipart/form-data")
+                        .row
+                            .col-md-12
+                                .form-group#alias-createWorkshopAlias
+                                    label(for='alias') Псевдоним (только английские символы и цифры)
+                                    input#aliasModal.form-control(type='text', name='alias')
+                                    input#workshopIdModal.form-control(type="hidden", name='workshopId', value=workshop._id)
+                                    span#link-alias-createWorkshopAlias.link-message
+                                    span#err-alias-createWorkshopAlias.error-message
+                            .col-md-12.text-right
+                                button.btn.btn-lg.btn-info#createWorkshopAlias(type='submit') Выбрать псевдоним
+    .row.maincontent
+        .col-md-3.col-lg-2.col-xs-4.sidebar
+            .sbmenu(style='margin-top: -62px;')
+                .sbmenuhdr Мастерская
+                .user-avatar
+                    if (workshop.get('workshopLogo'))
+                        if (typeof(workshop.get('img320')) !== 'undefined')
+                            img(src=workshop.get('img320'))
+                        else
+                            img(src=workshop.get('workshopLogo'))
+                        .updateAvatar
+                            button.btn.btn-success(data-toggle="modal", data-target="#updateWorkshopAvatarModal") Загрузить новое изображение
+                    else
+                        img(src='assets/images/tovar.png')
+                        .updateAvatar
+                            button.btn.btn-success(data-toggle="modal", data-target="#updateWorkshopAvatarModal") Загрузить новое изображение
+                    #updateWorkshopAvatarModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                        .modal-dialog.modal-sm
+                            .modal-content
+                                .modal-header
+                                    button.close(type='button', data-dismiss='modal')
+                                        span(aria-hidden='true') ×
+                                        span.sr-only Закрыть
+                                    h4#myModalLabel.modal-title Загрузить новое изображение
+                                .modal-body
+                                    form.login-form(method="post", action="/update-workshop-avatar", role='form', enctype="multipart/form-data")
+                                        .form-group
+                                            label(for="") Изображение мастерской
+                                            if (workshop.get('workshopLogo'))
+                                                #imagePreview.imageLoadButton.btn(style="background-image:url(" + workshop.get('workshopLogo') + ")")
+                                            else
+                                                #imagePreview.imageLoadButton.btn(style="background-image:url('assets/images/tovar.png')")
+                                            .uploadImageButton
+                                            input#uploadFile(type="file" name="image" accept="image/*" data-url="/upload")
+                                        button.btn.btn-info(type='submit') Изменить изображение
+                                        button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
+                                        span.help-block.error
+                .user-name= workshop.name
+                    a(href="/personal")
+                        span= user.get('firstName') + ' ' +user.get('secondName')
+                ul#userPersonalMenu.userPersonalMenu
+                    li#editProfileTurnerOn(data-toggle="collapse", data-target="#editWorkshopProfile")
+                        a Профиль
+                    li#manageBalanceTurnerOn(data-toggle="collapse", data-target="#workshopBalance")
+                        a Счет
+                    li#manageProductsTurnerOn.active(data-toggle="collapse", data-target="#editProducts")
+                        a Товары
+                    li#manageOrdersTurnerOn(data-toggle="collapse", data-target="#editOrders")
+                        a Заказы
+                    li#messagesTurnerOn(data-toggle="collapse", data-target="#editMessages")
+                        a Сообщения
+                    li#blogsTurnerOn(data-toggle="collapse", data-target="#editBlogs")
+                        a Блоги
+                    li(style="border-top: 3px solid rgb(247, 65, 65); box-shadow: inset 0 20px 20px -20px rgba(0, 0, 0, 0.48); padding: 20px 10px;")
+                        span(style="float: right;")= user.balance + 'р.'
+                        span(style="color: rgba(255, 255, 255, 0.69);") Ваш баланс
+                        br
+                        span(style="float: right; display: inline-block; max-width: 90px;text-align: right;line-height: 18px;margin-top: 3px;")= priceplan.name
+                        span(style="color: rgba(255, 255, 255, 0.69);") Ваш тариф
+                        br
+                        if (workshop.priceplan != '54049946dabc8f863d17b49e')
+                            span(style="float: right; display: inline-block; max-width: 90px;text-align: right;line-height: 18px;margin-top: 3px;")= ' ' + workshop.end
+                        else
+                            span(style="float: right; display: inline-block; max-width: 90px;text-align: right;line-height: 18px;margin-top: 3px;")= ' ' + 'Без ограничений'
+                        span(style="color: rgba(255, 255, 255, 0.69);") Срок тарифа (до)
+        .col-md-9.col-lg-10.col-xs-8.right-side-bar
+            .sbmenu(style='margin-top: -62px;margin-bottom: 30px;')
+                a(href="/personal")
+                    .sbmenuhdr(style='width: 165px; border-bottom: 5px solid white; padding: 8px 10px 7px 10px;') Пользователь
+            .row
+                .col-md-8(style="text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.67);")
+                    h3(style="font-family: Lobster;font-size: 53px;color: rgb(255, 60, 60);font-weight: normal;margin-top: -7px;margin-bottom: 15px;") Продавайте больше!
+                        span.substring(style="font-size:24px; margin-top:-5px;color: rgb(255, 173, 0);") Вместе с Лавкой
+                .col-md-4.text-right
+                    a(href="/deposite", style="background-color: rgba(255, 97, 97, 1);color: rgb(255, 255, 255);display: block;text-align: center;font-size: 20px;line-height: 20px;padding: 15px 0 15px 0;border-radius: 4px;margin-bottom: 15px;")
+                        i.fa.fa-chevron-circle-right(style="font-size: 40px;float: right;margin-right: 15px;")
+                        | Пополнить счет <br>и увеличить продажи
+                .col-md-12
+                    div(style="border-bottom: 2px solid rgba(255, 98, 98, 0.63);margin-bottom: 15px;")
+            .row
+                .col-md-12#userPersonalBlocks
+                    #editWorkshopProfile.collapse(data-turneron='#editProfileTurnerOn')
+                        h3 Редактирование профиля мастерской
+                        form(role='form', method='POST', action='/update-workshop-profile', name="update-workshop-profile", enctype="multipart/form-data")
+                            .row
+                                .col-md-6
+                                    .form-group#editWorkshopName
+                                        label(for='workshopNameInput') Наименование мастерской
+                                            span.notValidMessage Укажите наименование мастерской
+                                        input#workshopNameInput.form-control(type='text', name='workshopNameInput', placeholder='Введите наименование мастерской', value= workshop.name)
+                                    .form-group#editWorkshopCity
+                                        label(for='workshopAdressInput') Город
+                                            span.notValidMessage Укажите город мастерской
+                                        input#workshopAdressInput.form-control(type='text', name='workshopAdressInput', placeholder='Введите адрес мастерской', value= workshop.adres)
+                                    .form-group#editWorkshoPhone
+                                        label(for='workshopPhoneInput') Контактный телефон
+                                        input#workshopPhoneInput.form-control(type='text', name='workshopPhoneInput', placeholder='Введите контактный телефон', value= workshop.phone)
+                                    .form-group#editWorkshoPhone
+                                        label(for='workshopAliasInput') Псевдоним
+                                        input#workshopAliasInput.form-control(type='text', name='workshopAliasInput', disabled, placeholder='Введите Ссылку на сайт', value= workshop.alias)
+                                .col-md-6
+                                    .form-group#editWorkshopDescription
+                                        label(for='workshopDescriptiotInput') Краткое описание мастерской
+                                            span.notValidMessage Укажите описание мастерской
+                                        textarea#workshopDescriptiotInput.form-control(type='text', name='workshopDescriptiotInput', placeholder='Введите описание мастерской', rows="8", style="margin-bottom: 23px;")= workshop.description
+                                .col-md-12.text-right
+                                    button.btn.btn-lg.btn-info#editWorkshopProfileButton(type='submit') Сохранить изменения
+                    #editProducts.collapse.in(data-turneron='#manageProductsTurnerOn')
+                        h3 Управление товарами
+                            .pruducts-control(style="float:right; display:inline-block;")
+                                span.btn.btn-success(data-toggle="modal", data-target="#createNewProductModal") Добавить товар
+                                | &nbsp;
+                                span.btn.btn-info= 'Всего товаров ' + workshopProducts.length
+                        .row.products-list.category
+                            if workshopProducts.length == 0
+                                p К сожалению, список Ваших товаров пуст.
+                            each product in workshopProducts
+                                if (product.active == "true")
+                                    - if (highlightarray[product._id]) {var extraclass = 'extraproduct'} else {var  extraclass=""}
+                                    .col-md-3.col-lg-2.col-xs-6(class=extraclass + ' ' + superclass + ' ' + bestclass)
+                                        a(href='/edit-product-'+ product._id)
+                                            img(src=product.previewImg, style='width: 100%;', onError="this.onerror=null;this.src='assets/images/tovar.png';")
+                                            .tovarname
+                                                span=product.name
+                                            .tovarCartFooter
+                                                - if (product.views) {var views = product.views} else {var views = 0}
+                                                span=views
+                                                |&nbsp;
+                                                i.fa.fa-eye
+                                                .rating(style='cursor: pointer;')
+                                                .price= product.price
+                                                    i.fa.fa-rub.valuta
+                                            if (superProductsArray[product._id])
+                                                .superribbon
+                                                    span= 'до '+product.superdate
+                                            if (bestproducts[product._id])
+                                                .bestribbon
+                                                    span= 'до '+product.bestdate
+                                        .controls
+                                            a.btn.btn-sm.btn-info.edit.tooltipster(href='/product-' + product._id, data-tooltip="Открыть товар в новой вкладке", target="_blank") <i class="fa fa-external-link"></i>
+                                            //button.btn.btn-sm.btn-info <i class="fa fa-comment-o"></i>
+                                            button.btn.btn-sm.btn-success.editProductButton.tooltipster(data-link='/edit-product-' + product._id, data-tooltip="Редактировать") <i class="fa fa-pencil-square-o"></i>
+                                            //button.btn.btn-sm.btn-info <i class="fa fa-comment-o"></i>
+                                            button.btn.btn-sm.btn-danger.removeProductButton.tooltipster(data-toggle="modal", data-target="#removeProductModal", data-identirier='' + product._id, data-productimage=product.previewImg, data-productname=product.name, data-tooltip="Удалить товар") <i class="fa fa-times"></i>
+                            each product in workshopProducts
+                                if (product.active == "false")
+                                    - if (highlightarray[product._id]) {var extraclass = 'extraproduct'} else {var  extraclass=""}
+                                    .col-md-3.col-lg-2.col-xs-6.inactiveProduct(class=extraclass)
+                                        a
+                                            img(src=product.previewImg, style='width: 100%;', onError="this.onerror=null;this.src='assets/images/tovar.png';")
+                                            .tovarname= product.name
+                                            .tovarCartFooter
+                                                .price= product.price
+                                                    i.fa.fa-rub.valuta
+                                        .controls
+                                            button.btn.btn-sm.btn-success.editProductButton(data-link='/edit-product-' + product._id) <i class="fa fa-pencil-square-o"></i>
+                                            button.btn.btn-sm.btn-warning.removeProductButton(data-toggle="modal", data-target="#removeProductModal", data-identirier='' + product._id, data-productimage=product.previewImg, data-productname=product.name) <i class="fa fa-times"></i>
+                        #removeProductModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="mySmallModalLabel", aria-hidden="true")
+                            .modal-dialog.modal-sm
+                                .modal-content(style="background-color: rgb(134, 92, 92);padding:20px;")
+                                    img#removeProductImage(src='assets/images/tovar.png', style="width:100%;")
+                                    h4#removeProductName Наименование товара
+                                    p Вы уверены что хотите удалить этот товар?
+                                    p Восстановление товара после удаления невозможно
+                                    form.text-right(action="/removeProduct", method="POST", role='form', name="createProduct", enctype="multipart/form-data")
+                                        input#removeProductIdentifier(type="hidden", name="_id")
+                                        button.btn.btn-warning#cancelRemoveProduct Отмена
+                                        | &nbsp;
+                                        button.btn.btn-danger(type='submit') Удалить товар
+                        #resizeImageModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="mySmallModalLabel", aria-hidden="true")
+                            .modal-dialog
+                                .modal-content(style="background-color: rgb(134, 92, 92);padding:20px;")
+                                    form.text-right(action="/removeProduct", method="POST", role='form', name="createProduct", enctype="multipart/form-data")
+                                        img#resizeImage(src="", alt="")
+                                        button.btn.btn-warning(data-dismiss='modal') Отмена
+                                        | &nbsp;
+                                        button.btn.btn-success#cropIt(type='button') Сохранить
+                        #createNewProductModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                            .modal-dialog
+                                .modal-content(style="background-color: rgb(134, 92, 92);")
+                                    .modal-header
+                                        button.close(type='button', data-dismiss='modal')
+                                            span(aria-hidden='true') ×
+                                        span.sr-only Закрыть
+                                        h4#myModalLabel.modal-title Создать новый товар
+                                    .modal-body
+                                        form#createProductForm(role='form', method='POST', action='/add-product', name="createProduct", enctype="multipart/form-data")
+                                            .row
+                                                .col-md-8
+                                                    .form-group#categoryCreateProduct
+                                                        label Категория каталога
+                                                            span.notValidMessage Не указана категория каталога
+                                                        select.form-control(name="category")
+                                                            option(disabled="true", selected="true") Выберите категорию каталога
+                                                            each val in datka
+                                                                optgroup(label=val.self.name)
+                                                                    each chi in val.childs
+                                                                        option(value=chi._id)= chi.name
+                                                    .form-group#nameCreateProduct
+                                                        label(for='namename') Наименование товара
+                                                            span.notValidMessage Не указано наименование товара
+                                                        input#namename.form-control(type='text', name='namename', placeholder='Введите наименование')
+                                                    //.form-group
+                                                        label(for='introText') Краткое описание товара
+                                                        textarea#introText.form-control(name='introText', placeholder='Введите краткое описание', rows="4")
+                                                    .form-group#descriptionCreateProduct
+                                                        label(for='description') Полное описание товара
+                                                            span.notValidMessage Не указано описание товара
+                                                        textarea#description.form-control(type='text', name='description', placeholder='Введите полное описание товара')
+                                                    .form-group#availableCreateProduct
+                                                        label(for='price') Количество
+                                                            span.notValidMessage Не указано количество
+                                                        input#available.form-control(type='number', name='availableProduct', value='1')
+                                                    .form-group#priceCreateProduct
+                                                        label(for='price') Цена товара
+                                                            span.notValidMessage Не указана цена товара
+                                                        input#price.form-control(type='text', name='price')
+                                                        
+                                                    .form-group#priceCreateProduct
+                                                        label(for='alias') Псевдоним товара (только английские символы и цифры)
+                                                            span.notValidMessage Не указана ссылка на товар
+                                                        input#aliasProduct.form-control(type='text', name='alias')
+                                                .col-md-4
+                                                    .form-group
+                                                        label(for="") Изображение товара
+                                                            span.tooltipster(data-tooltip="Максимальный размер изображения 1000kB.", style="margin-left:15px; width: 21px; text-align:center;font-family:Lobster, sans-serif; color:white; background-color: rgb(213, 14, 14); border-radius:50px;display: inline-block;") i
+                                                        #imageLoaderError
+                                                        #imageProductPreview.imageLoadButton.btn(style="background-image=url('assets/images/tovar.png')")
+                                                        .uploadImageButton
+                                                            input#uploadProductPreview(type="file" accept="image/*"  name="image" data-url="/upload/product-previews")
+                                                // .col-md-12
+                                                    .form-group
+                                                        label Галлерея товара
+                                                        br
+                                                        small Кликните на картинку для редактирования
+                                                        input#product-gallery(type='file', name='gallery', multiple='true', accept='image/*' style="display: none;")
+                                                        button.btn.btn-success#addImages(type="button" style="margin-left: 10px;") Добавить картинки +
+                                                        #img-container
+                                                            ul#img-list
+                                                    a.uploadItAll Загрузить
+                                                .col-md-12.text-right
+                                                    button.btn.btn-lg.btn-info#createProductButton(type='submit') Создать товар
+                                    .modal-footer
+                                        button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
+                    #workshopBalance.collapse(data-turneron='#manageBalanceTurnerOn')
+                        h3 Управление счетом
+                        .row
+                            .col-md-8
+                                .infogroup
+                                    h4.infogroup-header
+                                        strong Тариф
+                                    h4= priceplan.name + ' '
+                                        span(style="color:rgba(150,150,150,0.5); font-size:14px; ")= '(' + priceplan.description + ')'
+                                    hr
+                                    p Стоимость тарифа
+                                        if (priceplan.price == '0')
+                                            strong(style="float:right;")= ' ' + 'Бесплатный'
+                                        else
+                                            strong(style="float:right;")= priceplan.price + 'руб./' + (priceplan.limitation / (1*7)) + 'нед.'
+                                    p Срок окончания тарифа
+                                        if (workshop.priceplan != '54049946dabc8f863d17b49e')
+                                            strong(style="float:right;")= ' ' + workshop.end
+                                        else
+                                            strong(style="float:right;")= ' ' + 'Без ограничений'
+                                    p Ограничение на размещение товаров
+                                        if (priceplan['product-limit-high'] == '0')
+                                            strong(style="float:right;")= ' ' + 'Без ограничений'
+                                        else
+                                            strong(style="float:right;")= ' Не более ' + priceplan['product-limit-high'] + ' товаров'
+                                    p Ограничение на категории размещения товаров
+                                        if (priceplan['category-limit-high'] == '0')
+                                            strong(style="float:right;")= ' ' + 'Без ограничений'
+                                        else
+                                            strong(style="float:right;")= ' Не более ' + priceplan['category-limit-high'] + ' категорий'
+                                .infogroup
+                                    h4.infogroup-header
+                                        strong Баланс
+                                    h4= user.balance
+                                        span(style="color:rgba(150,150,150,0.5); font-size:14px; ")= ' руб.'
+                            .col-md-4
+                                button.btn.btn-lg.btn-warning(style='font-size: 24px; font-weight: bold; text-shadow: 1px 1px 3px black; text-transform: uppercase; display:block;', data-toggle='modal', data-target='#changePricePlanModal') Изменить тариф
+                                .prolongtarif
+                                    .checkbox
+                                        label
+                                            input(type="checkbox", id="autoUpdate", value="option1" name="auto")
+                                            | Продлевать тариф автоматически
+                                            i.fa.fa-info-circle.tooltipster(data-tooltip="Произвести оплату продления тарифа автоматически")
+                                a.btn.btn-lg.btn-success(href="/deposite", style='font-size: 24px; font-weight: bold; text-shadow: 1px 1px 3px black; text-transform: uppercase;display:block;margin-top: 22px;') Пополнить счет
+                                #changePricePlanModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                                    .modal-dialog.modal-lg
+                                        .modal-content
+                                            .modal-header
+                                                button.close(type='button', data-dismiss='modal')
+                                                    span(aria-hidden='true') ×
+                                                    span.sr-only Закрыть
+                                                h4#myModalLabel.modal-title Изменение тарифа
+                                            .modal-body
+                                                p Ваш текущий тариф
+                                                    strong= ' ' + priceplan.name + ' '
+                                                .row.chanjintarif.text-center
+                                                    - console.log(priceplans)
+                                                    if (priceplans)
+                                                        each pp in priceplans
+                                                            if (pp.price == '0')
+                                                                - console.log(priceplan._id)
+                                                                - console.log(pp._id)
+                                                                if (priceplan._id.toString() == pp._id.toString())
+                                                                    .col-md-2
+                                                                        .priceplanlistitem.freeplan.btn.btn-warning.chosenPricePlan(data-changeid='' + pp._id.toString())
+                                                                            p
+                                                                                strong= pp.name
+                                                                            p.ppprice= ' ' + 'Бесплатный'
+                                                                            p.pptime Время не ограничено
+                                                                            p= pp.description
+                                                                            p
+                                                                                strong= 'до ' + pp['product-limit-high'] + ' товаров'
+                                                                            p= 'до ' + pp['category-limit-high'] + ' категорий'
+                                                                else
+                                                                    .col-md-2
+                                                                        .priceplanlistitem.freeplan.btn.btn-warning(data-changeid='' + pp._id.toString())
+                                                                            p
+                                                                                strong= pp.name
+                                                                            p.ppprice= ' ' + 'Бесплатный'
+                                                                            p.pptime Время не ограничено
+                                                                            p= pp.description
+                                                                            p
+                                                                                strong= 'до ' + pp['product-limit-high'] + ' товаров'
+                                                                            p= 'до ' + pp['category-limit-high'] + ' категорий'
+                                                            else
+                                                                if (parseInt(user.balance) < parseInt(pp.price))
+                                                                    if (priceplan._id.toString() == pp._id.toString())
+                                                                        .col-md-2
+                                                                            .priceplanlistitem.btn.btn-success.disabledPricePlan.chosenPricePlan
+                                                                                p
+                                                                                    strong= pp.name
+                                                                                p.ppprice= ' ' + pp.price + 'руб./' + (pp.limitation / (1*7)) + 'нед.'
+                                                                                p.pptime= 'Срок ' + (pp.limitation / (1*7)) + 'нед.'
+                                                                                p= pp.description
+                                                                                if (pp['product-limit-high'] !== '0')
+                                                                                    p
+                                                                                        strong= 'до ' + pp['product-limit-high'] + ' товаров'
+                                                                                else
+                                                                                    p
+                                                                                        strong Без ограничейний на количество товаров
+                                                                                if (pp['category-limit-high'] !== '0')
+                                                                                    p
+                                                                                        strong= 'до ' + pp['category-limit-high'] + ' категорий'
+                                                                                else
+                                                                                    p
+                                                                                        strong Без ограничейний на размещение в категориях
+                                                                    else
+                                                                        .col-md-2
+                                                                            .priceplanlistitem.btn.btn-success.disabledPricePlan
+                                                                                p
+                                                                                    strong= pp.name
+                                                                                p.ppprice= ' ' + pp.price + 'руб./' + (pp.limitation / (1*7)) + 'нед.'
+                                                                                p.pptime= 'Срок ' + (pp.limitation / (1*7)) + 'нед.'
+                                                                                p= pp.description
+                                                                                if (pp['product-limit-high'] !== '0')
+                                                                                    p
+                                                                                        strong= 'до ' + pp['product-limit-high'] + ' товаров'
+                                                                                else
+                                                                                    p
+                                                                                        strong Без ограничейний на количество товаров
+                                                                                if (pp['category-limit-high'] !== '0')
+                                                                                    p
+                                                                                        strong= 'до ' + pp['category-limit-high'] + ' категорий'
+                                                                                else
+                                                                                    p
+                                                                                        strong Без ограничейний на размещение в категориях
+                                                                else
+                                                                    if (priceplan._id.toString() == pp._id.toString())
+                                                                        .col-md-2
+                                                                            .priceplanlistitem.btn.btn-success.chosenPricePlan(data-changeid='' + pp._id.toString())
+                                                                                p
+                                                                                    strong= pp.name
+                                                                                p.ppprice= ' ' + pp.price + 'руб./' + (pp.limitation / (1*7)) + 'нед.'
+                                                                                p.pptime= 'Срок ' + (pp.limitation / (1*7)) + 'нед.'
+                                                                                p= pp.description
+                                                                                if (pp['product-limit-high'] !== '0')
+                                                                                    p
+                                                                                        strong= 'до ' + pp['product-limit-high'] + ' товаров'
+                                                                                else
+                                                                                    p
+                                                                                        strong Без ограничейний на количество товаров
+                                                                                if (pp['category-limit-high'] !== '0')
+                                                                                    p
+                                                                                        strong= 'до ' + pp['category-limit-high'] + ' категорий'
+                                                                                else
+                                                                                    p
+                                                                                        strong Без ограничейний на размещение в категориях
+                                                                    else
+                                                                        .col-md-2
+                                                                            .priceplanlistitem.btn.btn-success(data-changeid='' + pp._id.toString())
+                                                                                p
+                                                                                    strong= pp.name
+                                                                                p.ppprice= ' ' + pp.price + 'руб./' + (pp.limitation / (1*7)) + 'нед.'
+                                                                                p.pptime= 'Срок ' + (pp.limitation / (1*7)) + 'нед.'
+                                                                                p= pp.description
+                                                                                if (pp['product-limit-high'] !== '0')
+                                                                                    p
+                                                                                        strong= 'до ' + pp['product-limit-high'] + ' товаров'
+                                                                                else
+                                                                                    p
+                                                                                        strong Без ограничейний на количество товаров
+                                                                                if (pp['category-limit-high'] !== '0')
+                                                                                    p
+                                                                                        strong= 'до ' + pp['category-limit-high'] + ' категорий'
+                                                                                else
+                                                                                    p
+                                                                                        strong Без ограничейний на размещение в категориях
+                                                    form(role='form', method='POST', action='/change-price-plan', name="changePricePlan", enctype="multipart/form-data")
+                                                        input#changePricePlanIdInput(type="hidden", name="changePricePlanIdInput")
+                                                        button.btn.btn-lg.btn-info(type='submit') Изменить тариф
+                                                        a.btn.btn-lg.btn-success(href="/deposite") Пополнить счет
+                                            .modal-footer
+                                                button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
+                    #editOrders.collapse(data-turneron='#manageOrdersTurnerOn')
+                        h3 Управление заказами
+                        .orderslist
+                            if (orders.length > 0)
+                                - console.log(orders);
+                                each order in orders
+                                    if order.productobj
+                                            div(class="media orderlistelement "+order.status)
+                                                - var orderid
+                                                - if (order.ordernumber) {orderid = order.ordernumber} else {orderid = order._id}
+                                                .pull-left(style="position:relative;")
+                                                    a(href="")
+                                                        if (order.productobj.previewImg)
+                                                            img.media-object(src=order.productobj.previewImg alt="...", height="100")
+                                                        else
+                                                            img.media-object(src="assets/images/tovar.png" alt="...", height="100")
+                                                    button.btn.btn-sm.btn-warning.btnareusuretodeleteorder(style="width: 100%;border-radius: 0;padding: 1px;") Удалить
+                                                    .myorderdeletepopover(style="display:none;")
+                                                        .mypopoverheader Вы уверены?
+                                                        .mypopoverbody
+                                                            form(method="post", action="/orderstat", role='form', name="orderstat-form", style="display:inline-block;")
+                                                                input(type="hidden", name="act", value="delete")
+                                                                input(type="hidden", name="orderid", value=""+order._id)
+                                                                button.btn.btn-sm.btn-info(type='submit') Да
+                                                            | &nbsp;
+                                                            button.btn.btn-sm.btn-danger.btncanselorderdelete Отмена
+                                                    if (order.status != 'confirmed')
+                                                        button.btn.btn-sm.btn-success.btnareusuretoconfirmorder(style="width: 100%;border-radius: 0;padding: 1px;") Подтвердить выполнение
+                                                        .myorderconfirmpopover(style="display:none;")
+                                                            .mypopoverheader Вы уверены?
+                                                            .mypopoverbody
+                                                                form(method="post", action="/orderstat", role='form', name="orderstat-form", style="display:inline-block;")
+                                                                    input(type="hidden", name="act", value="confirm")
+                                                                    input(type="hidden", name="orderid", value=""+order._id)
+                                                                    button.btn.btn-sm.btn-success(type='submit') Да
+                                                                | &nbsp;
+                                                                button.btn.btn-sm.btn-danger.btncanselorderdelete Отмена
+                                                .media-body(style="margin: 5px;")
+                                                    h4.media-heading(style="margin:0;margin-top: 5px;")
+                                                        strong='Заказ №' + orderid
+                                                        - var orderdate =  new Date(order.created);
+                                                        span(style="float:right; font-size:14px; color:white; font-weight:normal;")= orderdate.getDate() + '.' + (orderdate.getMonth()+1) + '.' + orderdate.getFullYear()
+                                                        - if (order.status == 'confirmed')
+                                                            br
+                                                            span(style="float:right; font-size:14px; color:white; font-weight:normal;") Заказ выполнен
+                                                    p(style="margin:0;") Изделие &nbsp;
+                                                        strong= order.productobj.name
+                                                    p(style="margin:0;") Заказчик &nbsp;
+                                                        strong= '' + order.usersuplier.firstName + ' ' + order.usersuplier.secondName + ' '
+                                                        | |
+                                                        strong= ' ' + order.usersuplier.username + ' '
+                                                        if (order.usersuplier.phone)
+                                                            | |
+                                                            strong= ' ' + order.usersuplier.phone + ' '
+                                                    p(style="margin:0;")
+                                                        strong Комментарий:
+                                                    if (order.comment)
+                                                        p(style="color:silver")= order.comment
+                                                    else
+                                                        p(style="color:silver") Нет комментария
+                                                    //.controls.text-right
+                                                        button.btn.btn-sm.btn-success(disabled="")
+                                                            i.fa.fa-check
+                                                            | &nbsp;&nbsp;&nbsp;&nbsp;
+                                                            strong Принять заказ
+                                                        | &nbsp;
+                                                        button.btn.btn-sm.btn-danger(disabled="")
+                                                            i.fa.fa-times
+                                                            | &nbsp;&nbsp;&nbsp;&nbsp;
+                                                            strong Удалить заказ
+                            else
+                                p Заказов пока нет
+                    #editBlogs.collapse(data-turneron='#blogsTurnerOn')
+                        p Блок управления блогами
+                    #editMessages.collapse(data-turneron='#blogsTurnerOn')
+                        p Ваши сообщения
+                        each message in messages
+                            - console.log(workshop._userAccountId, message.user1, message.user2);
+                            - console.log('-_-_-_-_-')
+                                .message-item(id=message._id)
+                                    .message-header
+                                        img.pull-left.ava(src="assets/images/avatar.jpg", alt="")
+                                        p.name
+                                            strong=message.user1Name
+                                        p.last-message=message.items[message.items.length-1].text
+                                    .subs(style="display: none;")
+                                        .subs-main
+                                            each submessage in message.items
+                                                - if (submessage.from == workshop._userAccountId) 
+                                                    .submessage.pull-right
+                                                        p=submessage.text
+                                                - else
+                                                    .submessage
+                                                        p=submessage.text
+                                                br
+                                        form.respondOnMessage
+                                            .form-group
+                                                input.user1Id(type="hidden", value=message.user1)
+                                                input.user2Id(type="hidden", value=message.user2)
+                                                input.messageBody.form-control(type="text", placeholder="Введите сообщение")
+block customjs
+    script(type='text/javascript').
+        $(document).ready( function(){
+            var targetByHash = window.location.hash;
+            $('.userPersonalMenu').find("li[data-target='"+ targetByHash +"']").click();
+            $('#autoUpdate').click(function(){
+                var val = document.getElementById('autoUpdate').checked;
+                $.post( "/editworkshop", { action: "update-auto", update: val });
+            });
+            if (!$('#workshopAliasInput').val()){
+                $('input#aliasModal').on('input', function () {
+                    var value = $(this).val().replace(/[^\d\w_]/g, '');
+                    $(this).val(value);
+                    if (value) {
+                        $('#link-alias-createWorkshopAlias').text('lavka.club/workshops/' + value);
+                    } else {
+                        $('#link-alias-createWorkshopAlias').text('');
+                    }
+
+                });
+                $('#createWorkshopAliasModal').modal('show');
+            }
+
+            $('#createWorkshopAliasForm').submit(function() {
+                if ($('#aliasModal').val() == ''){
+                    $('#err-alias-createWorkshopAlias').text('Укажите псевдоним');
+                    return false;
+                }
+                var form = $(this);
+                var url = form.attr('action');
+                var alias = form.find('[name="alias"]').val();
+                var workshop = form.find('input:hidden[name="workshopId"]').val();
+                    $.post(url, { alias: alias, workshop: workshop})
+                    .done(function (data) {
+                                if (data == 'success'){
+                                    $('#createWorkshopAliasModal').modal('hide');
+                                    var alias = form.find('[name="alias"]').val();
+                                    $('#workshopAliasInput').val(alias);
+                                }else {
+                                    $('#err-alias-createWorkshopAlias').text(data);
+                                }
+                    })
+                    .fail(function () {
+                                $('#err-alias-createWorkshopAlias').text('Произошла непредвиденная ошибка');
+                    });
+                return false;
+            });
+        });
+
+
+
+
+        $('#aliasProduct').on('input', function () {
+            $(this).val($(this).val().replace(/[^\d\w_]/g, ''));
+        });
+
+        $('#createProductButton').on('click', function(){
+        var valid=true;
+
+        // Категория каталога
+        if ($('#categoryCreateProduct select').val()) {
+           // Категория каталога выбрана - все хорош с ней
+        } else {
+           // Категория каталога не выбрана
+            $('#categoryCreateProduct').addClass('notvalid');
+            valid=false;
+        }
+
+        // Наименование товара
+        if ($('#nameCreateProduct input').val()) {
+           // Наименование товара есть
+        } else {
+           // Не указано наименование товара
+            $('#nameCreateProduct').addClass('notvalid');
+            valid=false;
+        }
+
+        // Описание товара
+        if ($('#descriptionCreateProduct textarea').val()) {
+           // Описание товара есть
+        } else {
+           // Не указано описание товара
+            $('#descriptionCreateProduct').addClass('notvalid');
+            valid=false;
+        }
+
+        // Цена товара
+        if ($('#priceCreateProduct input').val()) {
+           // Цена товара есть
+           // Теперь надо проверить чтобы было больше 0
+        } else {
+           // Не указано цена товара
+            $('#priceCreateProduct').addClass('notvalid');
+            valid=false;
+        }
+
+        // Смотрим что получилось по итогу
+            if (valid) {
+
+            } else {
+                return false;
+            }
+        });
+
+        // Убираем предупреждение с поля если пользователь его изменил
+        $('#categoryCreateProduct select').on('change', function(){
+            $('#categoryCreateProduct').removeClass('notvalid');
+        })
+        $('#nameCreateProduct input').on('change', function(){
+            $('#nameCreateProduct').removeClass('notvalid');
+        })
+        $('#descriptionCreateProduct textarea').on('change', function(){
+            $('#descriptionCreateProduct').removeClass('notvalid');
+        })
+        $('#priceCreateProduct input').on('change', function(){
+            $('#priceCreateProduct').removeClass('notvalid');
+        });
+
+
+        // ПРоверяем валидность формы на изменение профиля мастерской
+
+        $('#editWorkshopProfileButton').on('click', function(){
+        var valid=true;
+
+        // Наименование мастерской
+        if ($('#editWorkshopName input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#addAliasModal').addClass('notvalid');
+            valid=false;
+        }
+
+        // Описание мастерской
+        if ($('#editWorkshopDescription textarea').val()) {
+           // Описание мастерской есть
+        } else {
+           // Не указано описание мастерской
+            $('#editWorkshopDescription').addClass('notvalid');
+            valid=false;
+        }
+
+        // Город мастерской
+        if ($('#editWorkshopCity input').val()) {
+           // Город мастерской указан
+        } else {
+           // Не указан Город мастерской
+            $('#editWorkshopCity').addClass('notvalid');
+            valid=false;
+        }
+
+        // Смотрим что получилось по итогу
+            if (valid) {
+
+            } else {
+                return false;
+            }
+        });
+
+        // Убираем предупреждение с поля если пользователь его изменил
+        $('#editWorkshopName input').on('change', function(){
+            $('#editWorkshopName').removeClass('notvalid');
+        })
+        $('#editWorkshopDescription textarea').on('change', function(){
+            $('#editWorkshopDescription').removeClass('notvalid');
+        })
+        $('#editWorkshopCity input').on('focus', function(){
+            $('#editWorkshopCity').removeClass('notvalid');
+        })
+
+        $('.btnareusuretodeleteorder').on('click', function(){
+            $(this).parent().find('.myorderdeletepopover').show();
+        });
+        $('.btnareusuretoconfirmorder').on('click', function(){
+            $(this).parent().find('.myorderconfirmpopover').show();
+        });
+        $('.btncanselorderdelete').on('click', function(){
+            $(this).parent().parent().hide();
+        })
+        $('#addImages').on('click', function() {
+            console.log('Add')
+            $('#product-gallery').click();
+        })
+        var nowImg;
+        $('#cropIt').on('click', function() {
+                    var result =  $('#resizeImage').cropper("getCroppedCanvas");
+                    console.log(result.toDataURL("image/jpeg"));
+                    nowImg.attr('src', result.toDataURL("image/jpeg"));
+                    $('#resizeImageModal').modal('hide');
+                });
+        function displayFiles(files) {
+            $.each(files, function(i, file) {      
+              if (!file.type.match(/image.*/)) {
+                // Отсеиваем не картинки
+                return true;
+              }           
+              // Создаем элемент li и помещаем в него название, миниатюру и progress bar,
+              // а также создаем ему свойство file, куда помещаем объект File (при загрузке понадобится)
+              var li = $('<li/>').appendTo(imgList);
+              //$('<div/>').text(file.name).appendTo(li);
+              var img = $('<img/>').appendTo(li);
+              //$('<div/>').addClass('progress').text('0%').appendTo(li);
+              li.get(0).file = file;
+            
+              // Создаем объект FileReader и по завершении чтения файла, отображаем миниатюру и обновляем
+              // инфу обо всех файлах
+              var reader = new FileReader();
+              reader.onload = (function(aImg) {
+                return function(e) {
+                  aImg.attr('src', e.target.result);
+                  aImg.attr('width', 150);
+                  /* ... обновляем инфу о выбранных файлах ... */
+                };
+              })(img);
+              $('#img-list').find('img').on('click', function() {
+                nowImg = $(this);
+                $('#resizeImage').attr('src', $(this).attr('src'));
+                $('#resizeImageModal').modal('show');
+                
+              });
+              var cropBoxData;
+                var canvasData;
+
+              $('#resizeImageModal').on('shown.bs.modal', function () {
+                $('#resizeImage').cropper({
+                  autoCropArea: 0.5,
+                  aspectRatio: 1/1,
+                  built: function () {
+                    $('#resizeImage').cropper('setCanvasData', canvasData);
+                    $('#resizeImage').cropper('setCropBoxData', cropBoxData);
+                  }
+                });
+              }).on('hidden.bs.modal', function () {
+                cropBoxData = $('#resizeImage').cropper('getCropBoxData');
+                canvasData = $('#resizeImage').cropper('getCanvasData');
+                $('#resizeImage').cropper('destroy');
+              });
+
+              reader.readAsDataURL(file);
+            });
+          }
+          $('.uploadItAll').on('click', function() {
+                $('#img-list').find('li').each(function() {
+                    console.log(this.file);
+                })
+              });
+          function uploadFile(file, url) {
+  
+              var reader = new FileReader();
+             
+              reader.onload = function() {    
+                var xhr = new XMLHttpRequest();    
+                
+                xhr.upload.addEventListener("progress", function(e) {
+                  if (e.lengthComputable) {
+                    var progress = (e.loaded * 100) / e.total;
+                    /* ... обновляем инфу о процессе загрузки ... */
+                  }
+                }, false);
+                
+                /* ... можно обрабатывать еще события load и error объекта xhr.upload ... */
+             
+                xhr.onreadystatechange = function () {
+                  if (this.readyState == 4) {
+                    if(this.status == 200) {
+                      /* ... все ок! смотрим в this.responseText ... */
+                    } else {
+                      /* ... ошибка! ... */
+                    }
+                  }
+                };
+                
+                xhr.open("POST", url);
+                var boundary = "xxxxxxxxx";    
+                // Устанавливаем заголовки
+                xhr.setRequestHeader("Content-Type", "multipart/form-data, boundary="+boundary);
+                xhr.setRequestHeader("Cache-Control", "no-cache");    
+                // Формируем тело запроса
+                var body = "--" + boundary + "\r\n";
+                body += "Content-Disposition: form-data; name='myFile'; filename='" + file.name + "'\r\n";
+                body += "Content-Type: application/octet-stream\r\n\r\n";
+                body += reader.result + "\r\n";
+                body += "--" + boundary + "--";
+             
+                if(xhr.sendAsBinary) {
+                  // только для firefox
+                  xhr.sendAsBinary(body);
+                } else {
+                  // chrome (так гласит спецификация W3C)
+                  xhr.send(body);
+                }
+              };
+              // Читаем файл
+              reader.readAsBinaryString(file);
+            }
+         // Стандарный input для файлов
+          var fileInput = $('#product-gallery');
+          
+          // ul-список, содержащий миниатюрки выбранных файлов
+          var imgList = $('ul#img-list');
+          
+          // Контейнер, куда можно помещать файлы методом drag and drop
+          var dropBox = $('#img-container');
+         
+          // Обработка события выбора файлов в стандартном поле
+          fileInput.bind({
+            change: function() {
+              displayFiles(this.files);
+            }
+          });
+            
+          // Обработка событий drag and drop при перетаскивании файлов на элемент dropBox
+          dropBox.bind({
+            dragenter: function() {
+              $(this).addClass('highlighted');
+              return false;
+            },
+            dragover: function() {
+              return false;
+            },
+            dragleave: function() {
+              $(this).removeClass('highlighted');
+              return false;
+            },
+            drop: function(e) {
+              var dt = e.originalEvent.dataTransfer;
+              displayFiles(dt.files);
+              return false;
+            }
+          });
+    - console.log(user.workshopTrained);
+    - if (!user.workshopTrained)
+        script(type='text/javascript').
+            $('#createWorkshopAliasModal').on('hidden.bs.modal', function() {
+                var enjoyhint_instance = new EnjoyHint({
+                        onEnd:function(){
+                            console.log('Workshop trained');
+                            $.ajax({
+                                type: 'POST',
+                                url: "/training",
+                                data: {user:$('#favUserId').val(), training: 'workshop'},
+                                success: function() {
+                                    console.log('Training saved!');
+                                }
+                            });
+                        }
+                });
+                var enjoyhint_script_steps = [
+                    {
+                        'click .pruducts-control' : 'Добавьте свой первый товар',
+                        'skipButton' : {className: "mySkip", text: " Пропустить "}
+                    },
+                    {
+                        'click #createProductForm': 'Заполните все поля формы',
+                        'skipButton' : {className: "mySkip", text: " Понятно "}
+                    }
+                ];
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            });
+    style.
+        .enjoyhint {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1135;
+            pointer-events: none;
+            overflow: hidden;
+        }

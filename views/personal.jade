@@ -1,0 +1,186 @@
+extends layoutCut
+block seotitle
+    title= 'Лавка. Личный кабинет пользователя'
+    meta(name="description", content="Лавка. Личный кабинет пользователя")
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content
+    .row.maincontent
+        .col-md-3.col-lg-2.col-xs-4.sidebar
+            .sbmenu(style='margin-top: -62px;')
+                .sbmenuhdr Пользователь
+                .user-avatar
+                    if (user.get('avatar') || user.get('img320'))
+                        if (typeof(user.get('img320')) !== 'undefined')
+                            img(src=user.get('img320'), onerror="this.onerror=null;this.src='assets/images/tovar.png';")
+                        else
+                            img(src=user.get('avatar'), onerror="this.onerror=null;this.src='assets/images/tovar.png';")
+                        .updateAvatar
+                            button.btn.btn-success(data-toggle="modal", data-target="#updateAvatarModal") Загрузить новое изображение
+                    else
+                        img(src='assets/images/avatar.jpg', onerror="this.onerror=null;this.src='assets/images/tovar.png';")
+                        .updateAvatar
+                            button.btn.btn-success(data-toggle="modal", data-target="#updateAvatarModal") Загрузить новое изображение
+                    #updateAvatarModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                        .modal-dialog.modal-sm
+                            .modal-content
+                                .modal-header
+                                    button.close(type='button', data-dismiss='modal')
+                                        span(aria-hidden='true') ×
+                                        span.sr-only Закрыть
+                                    h4#myModalLabel.modal-title Загрузить новое изображение
+                                .modal-body
+                                    form.login-form(method="post", action="/update-user-avatar", role='form', enctype="multipart/form-data")
+                                        .form-group
+                                            label(for="") Изображение пользователя
+                                            #imagePreview.imageLoadButton.btn
+                                            .uploadImageButton
+                                                input#uploadFile(type="file" name="image" data-url="/upload")
+                                        button.btn.btn-info(type='submit') Изменить изображение
+                                        button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
+                                        span.help-block.error
+                .user-name= user.get('firstName') + ' ' +user.get('secondName')
+                    span= user.get('username')
+                ul#userPersonalMenu.userPersonalMenu
+                    li#editUserProfileTurner.active(data-toggle="collapse", data-target="#editUserProfile", data-parent="#userPersonalBlocks")
+                        a Редактировать профиль
+                    if (workshop !== null)
+                        li()
+                            a(href='/workshop-private') Мастерская
+                    li#editUserFavouritesTurner(data-toggle="collapse", data-target="#userFavourites", data-parent="#userPersonalBlocks")
+                        a Избранное
+        .col-md-9.col-lg-10.col-xs-8.right-side-bar
+            if (workshop !== null)
+                .sbmenu(style='margin-top: -62px; margin-bottom: 30px;')
+                    a(href="/workshop-private")
+                        .sbmenuhdr(style='width: 165px; border-bottom: 5px solid white; padding: 8px 10px 7px 10px;') Мастерская
+            .row
+                .col-md-12#userPersonalBlocks
+                    #editUserProfile.collapse.in(data-turneron='#editUserProfileTurner')
+                        br
+                        h3 Изменение профиля пользователя
+                        form(role='form', method='POST', action='/update-user', name="update-user-form", enctype="multipart/form-data")
+                            .row
+                                .col-md-6
+                                    .form-group#newUserEmailInput
+                                        label(for='emailInput') Email
+                                            span.notValidMessage Укажите Ваш email
+                                        input#emailInput.form-control(type='email', name='emailInput', placeholder='Введите email', value=user.get('username'))
+                                    .form-group#newUserFirstNameInput
+                                        label(for='firstNameInput') Ваше имя
+                                            span.notValidMessage Укажите Ваше имя
+                                        input#firstNameInput.form-control(type='text', name='firstNameInput', placeholder='Введите ваше имя', value=user.get('firstName'))
+                                    .form-group#newUserSecondNameInput
+                                        label(for='secondNameInput') Ваша фамилия
+                                            span.notValidMessage Укажите Вашу Фамилию
+                                        input#secondNameInput.form-control(type='text', name='secondNameInput', placeholder='Введите вашу фамилию', value=user.get('secondName'))
+                                .col-md-6
+                                    .form-group
+                                        label(for='birthDateInput') Дата рождения
+                                        input#birthDateInput.form-control(type='date', name='birthDateInput', value=user.get('birthDate'))
+                                    .form-group#newUserPasswordInput
+                                        label(for='passwordInput') Пароль
+                                            span.notValidMessage Укажите пароль
+                                        input#passwordInput.form-control(type='password', name='passwordInput', placeholder='Password')
+                                    //.checkbox
+                                        label
+                                            input#subscribeInput(type='checkbox', name='subscribeInput')
+                                            | Хочу получать новостную рассылку
+                                .col-md-12.text-right
+                                    button#editUserProfileButton.btn.btn-lg.btn-info(type='submit') Cохранить изменения
+                    #userFavourites.collapse(data-turneron='#editUserFavouritesTurner')
+                        - if (favourite[0] == undefined)
+                            p Вы еще не добавили ни одного товара в избранное
+                        - if (favourite[0] != undefined)
+                            - console.log('CLIENT SIDE')
+                            - console.log(favourite); 
+                            each newFav in favourite[0]
+                                .col-md-3.col-lg-2.col-xs-3
+                                    - if (newFav.url) {var url = newFav.url} else {var url = '/product-' + newFav._id}
+                                    a(href=url)
+                                        - var nevimagelink;
+                                        - if (newFav.previewImg.substr(0,2) == '..') { nevimagelink = newFav.previewImg.substr(2);} else {nevimagelink = newFav.previewImg;}
+                                        img(src=nevimagelink, style='width: 100%;', onError="this.onerror=null;this.src='assets/images/tovar.png';", alt=newFav.name, title=newFav.name)
+                                        .tovarname= newFav.name
+                                        - if (newFav.views) {var views = newFav.views} else {var views = 0}
+                                        .tovarCartFooter= views + ' '
+                                            i.fa.fa-eye
+                                            .rating
+                                            - var parsdprice=parseInt( newFav.price.replace(/\s+/g, ''))
+                                            if (isNaN(parsdprice))
+                                                .noprice
+                                                    | цена
+                                                    br
+                                                    | не указана
+                                            else
+                                                .price= parsdprice
+                                                    i.fa.fa-rub.valuta
+                                    .controls
+                                            button.btn.btn-sm.btn-danger.removeFavButton.tooltipster(data-toggle="modal", data-target="#removeProductModal", data-identirier='' + newFav._id, data-productimage=newFav.previewImg, data-productname=newFav.name, data-tooltip="Удалить товар из избранного", data-ofuser='' + user.get('id')) <i class="fa fa-times"></i>
+block customjs
+    script(type='text/javascript').
+        //===========================================
+        // Добавление нового пользователя и мастерской
+        $('#editUserProfileButton').on('click', function(){
+        var valid=true;
+
+
+        // Емайл пользователя
+        if ($('#newUserEmailInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserEmailInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserFirstNameInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserFirstNameInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserSecondNameInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserSecondNameInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Емайл пользователя
+        if ($('#newUserPasswordInput input').val()) {
+           // Наименование мастерской есть
+        } else {
+           // Не указано наименование мастерской
+            $('#newUserPasswordInput').addClass('notvalid');
+            valid=false;
+        }
+
+        // Смотрим что получилось по итогу
+            if (valid) {
+
+            } else {
+                return false;
+            }
+        });
+
+        // Убираем предупреждение с поля если пользователь его изменил
+        $('#newUserEmailInput input').on('change', function(){
+            $('#newUserEmailInput').removeClass('notvalid');
+        })
+        $('#newUserFirstNameInput input').on('change', function(){
+            $('#newUserFirstNameInput').removeClass('notvalid');
+        })
+        $('#newUserSecondNameInput input').on('change', function(){
+            $('#newUserSecondNameInput').removeClass('notvalid');
+        })
+        $('#newUserPasswordInput input').on('change', function(){
+            $('#newUserPasswordInput').removeClass('notvalid');
+        })
+        
+
+

@@ -1,0 +1,34 @@
+extends managerlayout
+block seotitle
+    title= 'Панель управления | Лавка'
+    meta(name="keywords", content="Лавка, handmade, изделия ручной работы, мастер, ремесленник, рукоделие")
+block content 
+    .content-wrapper
+        // Content Header (Page header)
+        section.content-header
+          h1.pull-left
+            | Заказы
+          ol.breadcrumb
+            li
+              a(href='#')
+                i.fa.fa-dashboard
+                |  Home
+            li.active Dashboard
+        // Main content
+        section.content
+          .row.maincontent
+            each newOrder in orders
+                .col-md-12.order-item
+                        .col-md-6
+                            img.small-order(src="")
+                            p#productId= newOrder.product
+                        .col-md-6.text-right
+                            - var year = newOrder.created.getFullYear();
+                            - var day = newOrder.created.getDate();
+                            - var month = newOrder.created.getMonth()+1;
+                            - var hour = newOrder.created.getHours();
+                            - var minute = newOrder.created.getMinutes();
+                            p= day + ', ' + month + ', ' + year + '  ' + hour + ':' + minute
+
+
+                    
