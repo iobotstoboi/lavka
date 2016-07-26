@@ -13,6 +13,7 @@ var mongoose = require('./lib/mongoose');
 var session = require('express-session')
 var HttpError = require('./error').HttpError;
 var errorHandler = require('errorhandler');
+var subdomain = require('express-subdomain');
 
 //
 // Инициализируем скрипты шаблонов
@@ -53,8 +54,19 @@ app.use(require('./middleware/loadUser'));
 app.use(require('./middleware/loadWorkshop'));
 
 app.use(express.static(path.join(__dirname, 'public')));
-
+var checkUser = subdomain('*.*', function(req, res, next) {
+    console.log('$$$$$$$subdomain$$$$$$$$$');
+    var domain = req.headers.host.split('.');
+    console.log(domain);
+    if (domain[0] != "lavka") {
+        console.log(domain[0]);
+        res.redirect('http://lavka.club/'+domain[0])
+    }
+    next();
+});
+app.use(checkUser);
 // Прикрепляем скрипты шаблонов к URL-ам
+
 app.use('/', routes);
 
 /// catch 404 and forward to error handler

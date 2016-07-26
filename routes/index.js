@@ -148,4 +148,6 @@ router.get('/vkauth', require('./vkauth').get);
 router.get('/sync', require('./sync').get);
 //Сообщения
 router.post('/messages', checkAuth, require('./messages').post);
+
+router.get('/:id', require('./workshop-new').get);
 module.exports = router;
