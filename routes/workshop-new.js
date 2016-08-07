@@ -90,6 +90,11 @@ exports.get = function(req, res) {
             })
         }
     ], function (err,  work, catalogueTree, matchedProducts, prodWorkInfo, highlightarray, workshoptocustomer) {
+        console.log(workshoptocustomer);
+        workshoptocustomer.views += 1;
+        workshoptocustomer.save(function() {
+            console.log('Views updated');
+        })
         res.render('workshop', {
             datka:catalogueTree,
             path: req.path,

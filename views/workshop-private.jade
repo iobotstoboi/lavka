@@ -106,6 +106,23 @@ block content
                     a(href="/deposite", style="background-color: rgba(255, 97, 97, 1);color: rgb(255, 255, 255);display: block;text-align: center;font-size: 20px;line-height: 20px;padding: 15px 0 15px 0;border-radius: 4px;margin-bottom: 15px;")
                         i.fa.fa-chevron-circle-right(style="font-size: 40px;float: right;margin-right: 15px;")
                         | Пополнить счет <br>и увеличить продажи
+                    a(data-toggle="modal", data-target="#referLink", style="cursor:pointer;background-color: rgb(91, 192, 222);color: rgb(255, 255, 255);display: block;text-align: center;font-size: 20px;line-height: 20px;padding: 15px 0 15px 0;border-radius: 4px;margin-bottom: 15px;")
+                        i.fa.fa-chevron-circle-right(style="font-size: 40px;float: right;margin-right: 15px;margin-top:-10px;")
+                        | Пригласить друзей
+                    #referLink.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', style='text-align:left;')
+                      .modal-dialog(role='document')
+                        .modal-content
+                          .modal-header
+                            button.close(type='button', data-dismiss='modal', aria-label='Close')
+                              span(aria-hidden='true') ×
+                            h4#myModalLabel.modal-title Пригласить друзей
+                          .modal-body
+                            p Отправьте ссылку своим друзьям и получите бонусы
+                            .form-group
+                                input.form-control(type="text" value="lavka.club/?ref=dsg3fefawd" readonly)
+                            a.generateref(href="#") Сгенерировать новую ссылку
+                          .modal-footer
+                            button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
                 .col-md-12
                     div(style="border-bottom: 2px solid rgba(255, 98, 98, 0.63);margin-bottom: 15px;")
             .row
@@ -128,7 +145,7 @@ block content
                                         input#workshopPhoneInput.form-control(type='text', name='workshopPhoneInput', placeholder='Введите контактный телефон', value= workshop.phone)
                                     .form-group#editWorkshoPhone
                                         label(for='workshopAliasInput') Псевдоним
-                                        input#workshopAliasInput.form-control(type='text', name='workshopAliasInput', disabled, placeholder='Введите Ссылку на сайт', value= workshop.alias)
+                                        input#workshopAliasInput.form-control(type='text', name='workshopAliasInput', placeholder='Введите Ссылку на сайт', value= workshop.alias)
                                 .col-md-6
                                     .form-group#editWorkshopDescription
                                         label(for='workshopDescriptiotInput') Краткое описание мастерской
@@ -138,8 +155,14 @@ block content
                                     button.btn.btn-lg.btn-info#editWorkshopProfileButton(type='submit') Сохранить изменения
                     #editProducts.collapse.in(data-turneron='#manageProductsTurnerOn')
                         h3 Управление товарами
+                            p(style="display:none;")=token
                             .pruducts-control(style="float:right; display:inline-block;")
                                 span.btn.btn-success(data-toggle="modal", data-target="#createNewProductModal") Добавить товар
+                                | &nbsp;
+                                - if (token)
+                                    span.btn.btn-success.btn-vk(data-toggle="modal", data-target="#importModal") Импортировать товары из ВК
+                                    | &nbsp;
+                                    span.btn.btn-success.btn-ok(data-toggle="modal", data-target="#importModalOK") Импортировать товары из OK
                                 | &nbsp;
                                 span.btn.btn-info= 'Всего товаров ' + workshopProducts.length
                         .row.products-list.category
@@ -258,7 +281,7 @@ block content
                                                         #imageLoaderError
                                                         #imageProductPreview.imageLoadButton.btn(style="background-image=url('assets/images/tovar.png')")
                                                         .uploadImageButton
-                                                            input#uploadProductPreview(type="file" accept="image/*"  name="image" data-url="/upload/product-previews")
+                                                            input#uploadProductPreview(required type="file" accept="image/*"  name="image" data-url="/upload/product-previews")
                                                 // .col-md-12
                                                     .form-group
                                                         label Галлерея товара
@@ -272,6 +295,79 @@ block content
                                                 .col-md-12.text-right
                                                     button.btn.btn-lg.btn-info#createProductButton(type='submit') Создать товар
                                     .modal-footer
+
+                                        button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
+                    #importModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                            .modal-dialog
+                                .modal-content(style="background-color: rgb(134, 92, 92);")
+                                    .modal-header
+                                        button.close(type='button', data-dismiss='modal')
+                                            span(aria-hidden='true') ×
+                                        span.sr-only Закрыть
+                                        h4#myModalLabel.modal-title Импорт товаров из вконтакте
+                                        .form-group
+                                            input.form-control#grouplink(type="text" placeholder="Ссылка на сообщество вконтакте")
+                                            input.form-control#groupid(type="hidden")
+                                        .form-group
+                                            button.btn.btn-success.btn-step-two(type="button") Дальше
+                                        .step-two(style="display:none;")
+                                            .radio
+                                              label
+                                                input#optionsRadios1(type='radio', name='method', value='market')
+                                                |     Товары
+                                            .radio
+                                              label
+                                                input#optionsRadios2(type='radio', name='method', value='album')
+                                                |     Альбом
+                                            .controls(style="display:none;")
+                                                .back
+                                                    i.fa.fa-arrow-left
+                                            .row.albums
+                                            .row.photos
+                                            .form-group#categoryImportProduct
+                                                            label Категория каталога
+                                                                span.notValidMessage Не указана категория каталога
+                                                            select.importerCat.form-control(name="category" required)
+                                                                option(disabled="true", selected="true") Выберите категорию каталога
+                                                                each val in datka
+                                                                    optgroup(label=val.self.name)
+                                                                        each chi in val.childs
+                                                                            option(value=chi._id)= chi.name
+                                            //button.btn.btn-warning#importVk(type='button') Импортировать
+                                            input#workId(type="hidden", value=workshop._id)
+                                            input#workUser(type="hidden", value=workshop._userAccountId)
+
+                                        .row.imported(style="margin-top:30px;")
+
+                                    .modal-footer
+                                        button.btn.btn-success.alltodb(type='button') Сохранить
+                                        button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
+                    #importModalOK.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                            .modal-dialog
+                                .modal-content(style="background-color: rgb(134, 92, 92);")
+                                    .modal-header
+                                        button.close(type='button', data-dismiss='modal')
+                                            span(aria-hidden='true') ×
+                                        span.sr-only Закрыть
+                                        h4#myModalLabel.modal-title Импорт товаров из Одноклассников
+                                        .form-group
+                                            input.form-control#okgroupid(type="text" placeholder="ID группы в Одноклассниках")
+                                        .form-group
+                                            input.form-control#okalbumid(type="text" placeholder="ID альбома в Одноклассниках")
+                                        .form-group#categoryImportProduct
+                                                        label Категория каталога
+                                                            span.notValidMessage Не указана категория каталога
+                                                        select.importerCat.form-control(name="category")
+                                                            option(disabled="true", selected="true") Выберите категорию каталога
+                                                            each val in datka
+                                                                optgroup(label=val.self.name)
+                                                                    each chi in val.childs
+                                                                        option(value=chi._id)= chi.name
+                                        button.btn.btn-warning#importOk(type='button') Импортировать
+                                        .row.photos(style="margin-top:30px;")
+
+                                    .modal-footer
+                                        button.btn.btn-success.alltodb(type='button') Сохранить
                                         button.btn.btn-default(type='button', data-dismiss='modal') Закрыть
                     #workshopBalance.collapse(data-turneron='#manageBalanceTurnerOn')
                         h3 Управление счетом

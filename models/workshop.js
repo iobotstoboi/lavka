@@ -36,7 +36,8 @@ var workshopSchema = new Schema({
         default: Date.now
     },
     alias: {type: String},
-    autoUpdate: {type: Boolean}
+    autoUpdate: {type: Boolean},
+    views: {type: Number, default: 0}
 });
 
 // Метод для нахождения пользователя к которому прикреплена мастерская

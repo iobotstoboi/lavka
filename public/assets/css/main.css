@@ -1684,6 +1684,7 @@ a.vk-auth {
     border-radius: 5px;
     box-sizing: border-box;
     cursor: pointer;
+    vertical-align: top;
 }
 
 a.vk-auth:hover {
@@ -1692,6 +1693,7 @@ a.vk-auth:hover {
 
 .soc-auth {
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 .cart-list {
     margin: -15px;
@@ -1752,4 +1754,124 @@ a.vk-auth:hover {
 }
 .row.category .col-md-3 > a img {
     height: 116px;
+}
+.ok-auth {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: url('http://lavka.club/assets/images/odnoklassinki.png');
+    background-size: cover;
+    margin-left: 10px;
+}
+.btn-vk {
+    background: #507299;
+    border: #507299;
+}
+
+.btn-ok {
+    background: #ee8208;
+    border-color: #ee8208;
+}
+.album-cover {
+    width: 100%;
+    height: 200px;
+    -webkit-filter: brightness(50%);
+    transition: 0.2s;
+}
+
+.album-card {
+    width: 50%;
+    float: left;
+    cursor: pointer;
+}
+.album-card .title {
+    max-height: 25px;
+    overflow: hidden;
+    margin-top: -25px;
+    background: #606060;
+    margin-bottom: 0px;
+    position: relative;
+}
+.album-card:hover .album-cover {
+    -webkit-filter: brightness(100%);
+}
+.photo-cover {
+    height: 150px;
+    background-position: center;
+    width: 100%;
+    -webkit-filter: brightness(50%);
+}
+
+.photo-card {
+    width: 25%;
+    float: left;
+    cursor: pointer;
+}
+
+.photo-card p {
+    display: block;
+    height: 30px;
+    overflow: hidden;
+    margin-top: -30px;
+    background: rgba(0, 0, 0, 0.47);
+    margin-bottom: -5px;
+}
+
+.photo-card .form-control {
+    border-radius: 0;
+    border: none;
+}
+.controls {
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-bottom: -30px;
+    /* padding: 0 15px; */
+    box-sizing: border-box;
+}
+
+.controls .back {
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.72);
+    position: relative;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 4px 0px;
+    cursor: pointer;
+}
+.todb .photo-cover {
+    -webkit-filter: brightness(100%);
+}
+.photo-controls {
+    margin-bottom: -30px;
+    position: relative;
+    z-index: 9999;
+}
+
+.check {
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.48);
+    text-align: center;
+    box-sizing: border-box;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.check.checked {
+    color: #5cb85c;
+    background: #affac6;
+}
+.fb-auth {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: #3b5998;
+    box-sizing: border-box;
+    text-align: center;
+    padding-top: 5px;
+    vertical-align: top;
+    margin-left: 10px;
+    border-radius: 5px;
+    cursor: pointer;
 }

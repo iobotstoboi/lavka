@@ -61,17 +61,22 @@ exports.get = function(req, res) {
                 } else {
                     abilityActivateProduct = false;
                 }
+                console.log('Here I am! At priceplan');
                 callback(null,product, matchedProducts, workshopid, workshop, priceplan, abilityActivateProduct);
 
             });
         },
         function(product, matchedProducts, workshopid, workshop, priceplan, abilityActivateProduct, callback){
+            console.log('Here I am! At Category');
+
             Category.getCatalogueTree(function(catalogueTree){
                 callback(null, product, matchedProducts, workshopid, workshop, priceplan, abilityActivateProduct, catalogueTree);
             });
         }
     ], function (err,  product, matchedProducts, workshopid, workshop, priceplan, abilityActivateProduct, catalogueTree) {
+        console.log('Here I am! At Finale');
         res.render('editProduct', {datka:catalogueTree, path: req.path, product: product, abilityActivateProduct:abilityActivateProduct ,priceplan:priceplan, workshop:workshop});
+        console.log(arguments);
     });
 };
 

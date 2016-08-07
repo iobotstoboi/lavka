@@ -54,7 +54,8 @@ router.post('/removeProduct', checkAuth, require('./removeproduct').post);
 
 router.post('/change-price-plan', checkAuth, require('./changepriceplan').post);
 router.post('/activate-product', checkAuth, require('./activateproduct').post);
-
+router.get('/import-:method', require('./import').get);
+router.post('/import', require('./import').post);
 router.post('/apply-service-product', checkAuth, require('./applyserviceproduct').post);
 
 //Новый вывод категорий и продуктов
@@ -144,10 +145,11 @@ router.post('/cart', require('./cart').post);
 
 router.post('/training', checkAuth, require('./training').post);
 router.get('/vkauth', require('./vkauth').get);
+router.get('/okauth', require('./okauth').get);
+router.get('/fbauth', require('./fbauth').get);
 
 router.get('/sync', require('./sync').get);
 //Сообщения
 router.post('/messages', checkAuth, require('./messages').post);
-
 router.get('/:id', require('./workshop-new').get);
 module.exports = router;

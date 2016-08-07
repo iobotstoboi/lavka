@@ -48,6 +48,8 @@ block content
                             a(href='/workshop-private') Мастерская
                     li#editUserFavouritesTurner(data-toggle="collapse", data-target="#userFavourites", data-parent="#userPersonalBlocks")
                         a Избранное
+                    li#editUserOrdersTurner(data-toggle="collapse", data-target="#userOrders", data-parent="#userPersonalBlocks")
+                        a Мои заказы
         .col-md-9.col-lg-10.col-xs-8.right-side-bar
             if (workshop !== null)
                 .sbmenu(style='margin-top: -62px; margin-bottom: 30px;')
@@ -72,7 +74,7 @@ block content
                                     .form-group#newUserSecondNameInput
                                         label(for='secondNameInput') Ваша фамилия
                                             span.notValidMessage Укажите Вашу Фамилию
-                                        input#secondNameInput.form-control(type='text', name='secondNameInput', placeholder='Введите вашу фамилию', value=user.get('secondName'))
+                                        input#secondNameInput.form-control(type='text', name='secondNameInput', autocomplete="off", placeholder='Введите вашу фамилию', value=user.get('secondName'))
                                 .col-md-6
                                     .form-group
                                         label(for='birthDateInput') Дата рождения
@@ -80,7 +82,7 @@ block content
                                     .form-group#newUserPasswordInput
                                         label(for='passwordInput') Пароль
                                             span.notValidMessage Укажите пароль
-                                        input#passwordInput.form-control(type='password', name='passwordInput', placeholder='Password')
+                                        input#passwordInput.form-control(type='password', autocomplete="off", name='passwordInput', placeholder='Password')
                                     //.checkbox
                                         label
                                             input#subscribeInput(type='checkbox', name='subscribeInput')
@@ -116,13 +118,81 @@ block content
                                                     i.fa.fa-rub.valuta
                                     .controls
                                             button.btn.btn-sm.btn-danger.removeFavButton.tooltipster(data-toggle="modal", data-target="#removeProductModal", data-identirier='' + newFav._id, data-productimage=newFav.previewImg, data-productname=newFav.name, data-tooltip="Удалить товар из избранного", data-ofuser='' + user.get('id')) <i class="fa fa-times"></i>
+                    #userOrders.collapse(data-turneron='#editUserFavouritesTurner')
+                        - if (orders == undefined)
+                            p Вы еще не сделали ни одного заказа
+                        - else
+                            each order in orders
+                                    if order.productobj
+                                            div(class="media orderlistelement "+order.order.status)
+                                                - var orderid
+                                                - if (order.order.ordernumber) {orderid = order.order.ordernumber} else {orderid = order.order._id}
+                                                .pull-left(style="position:relative;")
+                                                    a(href="")
+                                                        if (order.productobj.previewImg)
+                                                            img.media-object(src=order.productobj.previewImg alt="...", height="100")
+                                                        else
+                                                            img.media-object(src="assets/images/tovar.png" alt="...", height="100")
+                                                    button.btn.btn-sm.btn-warning.btnareusuretodeleteorder(style="width: 100%;border-radius: 0;padding: 1px;") Удалить
+                                                    .myorderdeletepopover(style="display:none;")
+                                                        .mypopoverheader Вы уверены?
+                                                        .mypopoverbody
+                                                            form(method="post", action="/orderstat", role='form', name="orderstat-form", style="display:inline-block;")
+                                                                input(type="hidden", name="act", value="delete")
+                                                                input(type="hidden", name="orderid", value=""+order.order._id)
+                                                                button.btn.btn-sm.btn-info(type='submit') Да
+                                                            | &nbsp;
+                                                            button.btn.btn-sm.btn-danger.btncanselorderdelete Отмена
+                                                    if (order.status != 'confirmed')
+                                                        button.btn.btn-sm.btn-success.btnareusuretoconfirmorder(style="width: 100%;border-radius: 0;padding: 1px;") Подтвердить получение
+                                                        .myorderconfirmpopover(style="display:none;")
+                                                            .mypopoverheader Вы уверены?
+                                                            .mypopoverbody
+                                                                form(method="post", action="/orderstat", role='form', name="orderstat-form", style="display:inline-block;")
+                                                                    input(type="hidden", name="act", value="confirm")
+                                                                    input(type="hidden", name="orderid", value=""+order.order._id)
+                                                                    button.btn.btn-sm.btn-success(type='submit') Да
+                                                                | &nbsp;
+                                                                button.btn.btn-sm.btn-danger.btncanselorderdelete Отмена
+                                                .media-body(style="margin: 5px;")
+                                                    h4.media-heading(style="margin:0;margin-top: 5px;")
+                                                        strong='Заказ №' + orderid
+                                                        - var orderdate =  new Date(order.order.created);
+                                                        span(style="float:right; font-size:14px; color:white; font-weight:normal;")= orderdate.getDate() + '.' + (orderdate.getMonth()+1) + '.' + orderdate.getFullYear()
+                                                        - if (order.order.status == 'confirmed')
+                                                            br
+                                                            span(style="float:right; font-size:14px; color:white; font-weight:normal;") Заказ выполнен
+                                                    p(style="margin:0;") Изделие &nbsp;
+                                                        strong= order.productobj.name
+                                                    p(style="margin:0;") Заказчик &nbsp;
+                                                        strong= '' + order.usersuplier.firstName + ' ' + order.usersuplier.secondName + ' '
+                                                        | |
+                                                        strong= ' ' + order.usersuplier.username + ' '
+                                                        if (order.usersuplier.phone)
+                                                            | |
+                                                            strong= ' ' + order.usersuplier.phone + ' '
+                                                    p(style="margin:0;")
+                                                        strong Комментарий:
+                                                    if (order.order.comment)
+                                                        p(style="color:silver")= order.comment
+                                                    else
+                                                        p(style="color:silver") Нет комментария
 block customjs
     script(type='text/javascript').
+        $('.btnareusuretodeleteorder').on('click', function(){
+            $(this).parent().find('.myorderdeletepopover').show();
+        });
+        $('.btnareusuretoconfirmorder').on('click', function(){
+            $(this).parent().find('.myorderconfirmpopover').show();
+        });
+        $('.btncanselorderdelete').on('click', function(){
+            $(this).parent().parent().hide();
+        })
         //===========================================
         // Добавление нового пользователя и мастерской
         $('#editUserProfileButton').on('click', function(){
         var valid=true;
-
+        
 
         // Емайл пользователя
         if ($('#newUserEmailInput input').val()) {

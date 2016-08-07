@@ -95,7 +95,8 @@ schema.statics.authorize = function(username, password, type, callback, vkoption
                 }
             } else {
                 if (type == "vkauth") {
-                    var user = new User({username: vkoptions.username});
+                    console.log(vkoptions);
+                    var user = new User({username: vkoptions.username, firstName: vkoptions.firstName, avatar: vkoptions.avatar, hashedPassword: 'd41d8cd98f00b204e9800998ecf8427e', secondName:vkoptions.secondName});
                     user.save(function(err) {
                         if (err) return callback(err);
                         callback(null, user);

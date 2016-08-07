@@ -285,13 +285,243 @@ $('#multiOrderNewUser').on('submit', function() {
     });
     
     return false;
-})
+});
+$('input[name="method"]').on('change', function() {
+    console.log('WHOO');
+    if ($(this).val() == "album") {
+        //$('#albumid').show();
+        var groupid = $('#groupid').val();
+        $.ajax({
+                        type: 'GET',
+                        url: "/import-getalbums?groupid="+groupid,
+                        data: {},
+                        success: function(data) {
+                            console.log(data);
+                            $('.albums').html('<p style="margin-left:15px;">Выберите альбом</p>');
+                            var albums = data.response.items;
+                            $(albums).each(function() {
+                                $('.albums').append('<div id="'+this.id+'" class="album-card"><div class="album-cover" style="background-image:url(\''+this.thumb_src+'\');background-size:cover;"></div><p class="title">'+this.description+'</p></div>')
+                            });
+                            $('.album-card').on('click', function() {
+                                console.log('Album choosen');
+                                var albumid = $(this).attr('id');
+                                console.log(albumid);
+                                $.ajax({
+                                                type: 'GET',
+                                                url: "/import-vkalbum?groupid="+groupid+"&albumid="+albumid,
+                                                data: {groupid:groupid},
+                                                success: function(data) {
+                                                    var vkresponse = JSON.parse(data);
+                                                    console.log(vkresponse);
+                                                    var vkphotos = vkresponse.response.items;
+                                                    console.log(vkphotos);
+
+                                                    $('.albums').fadeOut();
+                                                    $('.photos').html('');
+                                                    $('.photos').fadeIn();
+                                                    $('.controls').fadeIn();
+                                                    $('.back').show();
+                                                    $(vkphotos).each(function() {
+                                                        $('.photos').append('<div class="photo-card"><div class="photo-controls"><div class="check"><i class="fa fa-check" aria-hidden="true"></i></div></div><div class="photo-cover" style="background-image:url(\''+this.photo_604+'\');background-size:cover;"></div><p class="title">'+this.text+'</p><input type="text" class="form-control price" placeholder="Введите цену" /><input class="bigimg" type="hidden" value="'+this.photo_604+'"/><input type="hidden" class="thumbsrc" value="'+this.photo_130+'"/><input class="impdescription" type="hidden" value=" "/></div>')
+                                                    });
+                                                    $('.photo-card .check').on('click', function() {
+                                                        if ($(this).hasClass('checked')) {
+                                                            $(this).removeClass('checked');
+                                                            $(this).parent().parent().removeClass('todb');
+                                                        } else {
+                                                            $(this).addClass('checked');
+                                                            $(this).parent().parent().addClass('todb');
+                                                        }
+                                                    })
+                                                }
+                                });
+                            });
+                            $('.back').on('click', function() {
+                                $('.photos').fadeOut();
+                                $('.albums').fadeIn();
+                                $('.back').hide();
+                            })
+                        }
+        });
+    } else {
+        //$('#albumid').hide();
+        var groupid = $('#groupid').val();
+        $.ajax({
+                        type: 'GET',
+                        url: "/import-vkmarket?groupid="+groupid,
+                        data: {groupid:groupid},
+                        success: function(data) {
+                            var vkresponse = JSON.parse(data);
+                            console.log(vkresponse);
+                            var vkproducts = vkresponse.response.items;
+                            console.log(vkproducts);
+                            $('.albums').fadeOut();
+                            $('.photos').html('');
+                            $('.photos').fadeIn();
+                            $(vkproducts).each(function() {
+                                $('.photos').append('<div class="photo-card"><div class="photo-controls"><div class="check"><i class="fa fa-check" aria-hidden="true"></i></div></div><div class="photo-cover" style="background-image:url(\''+this.photos[0].photo_604+'\');background-size:cover;"></div><p class="title">'+this.title+'</p><input type="text" class="form-control price" value="'+parseInt(this.price.amount)/100+'" placeholder="Введите цену" /><input class="bigimg" type="hidden" value="'+this.photos[0].photo_604+'"/><input type="hidden" class="thumbsrc" value="'+this.thumb_photo+'"/><input class="impdescription" type="hidden" value="'+this.description+'"/></div>')
+                            });
+                            $('.photo-card .check').on('click', function() {
+                                                        if ($(this).hasClass('checked')) {
+                                                            $(this).removeClass('checked');
+                                                            $(this).parent().parent().removeClass('todb');
+                                                        } else {
+                                                            $(this).addClass('checked');
+                                                            $(this).parent().parent().addClass('todb');
+                                                        }
+                                                    })
+                        }
+        });
+    }
+});
+
+$('.btn-step-two').on('click', function() {
+    var grouplink = $('#grouplink').val();
+    console.log(grouplink);
+    var vkidentifier = grouplink.split('/');
+    console.log(vkidentifier);
+    $(vkidentifier).each(function() {
+        if (this != 'https:' && this != '' && this != 'new.vk.com' && this != 'vk.com') {
+            vkidentifier = this;
+        }
+    });
+    console.log(vkidentifier.toString());
+    var method = 'getgroupid';
+    
+    $.ajax({
+                        type: 'GET',
+                        url: "/import-getgroupid?grouplink="+vkidentifier.toString(),
+                        data: {},
+                        success: function(data) {
+                            console.log(data);
+                            var gid = data.response[0].gid;
+                            console.log(gid);
+                            $('#groupid').val(gid);
+                            $('.step-two').toggle();
+                        }
+        });
+});
+/*
+$('#importVk').on('click', function() {
+    var groupid = $('#groupid').val();
+    console.log(groupid);
+    var method = $('input[name="method"]:checked').val();
+    if (method == "market") {
+        $.ajax({
+                        type: 'GET',
+                        url: "/import-vkmarket?groupid="+groupid,
+                        data: {groupid:groupid},
+                        success: function(data) {
+                            var vkresponse = JSON.parse(data);
+                            console.log(vkresponse);
+                            var vkproducts = vkresponse.response.items;
+                            console.log(vkproducts);
+                            $('.imported').html('');
+                            $(vkproducts).each(function() {
+                                $('.imported').append('<div class="col-xs-4" style="min-height:350px;"><img class="img-responsive" src="'+this.thumb_photo+'" alt="" /><p class="title">'+this.title+'</p><input type="text" class="form-control price" value="'+parseInt(this.price.amount)/100+'" placeholder="Введите цену" /><input class="bigimg" type="hidden" value="'+this.photos[0].photo_604+'"/><input class="impdescription" type="hidden" value=" "/></div>')
+                            });
+                        }
+        });
+    }
+    if (method == "album") {
+        var albumid = $('#albumid').val();
+        $.ajax({
+                        type: 'GET',
+                        url: "/import-vkalbum?groupid="+groupid+"&albumid="+albumid,
+                        data: {groupid:groupid},
+                        success: function(data) {
+                            var vkresponse = JSON.parse(data);
+                            console.log(vkresponse);
+                            var vkphotos = vkresponse.response.items;
+                            console.log(vkphotos);
+                            $('.imported').html('');
+                            $(vkphotos).each(function() {
+                                $('.imported').append('<div class="col-xs-4" style="min-height:350px;"><img class="img-responsive" src="'+this.photo_130+'" alt="" /><p class="title">'+this.text+'</p><input type="text" class="form-control price" placeholder="Введите цену" /><input class="bigimg" type="hidden" value="'+this.photo_604+'"/><input class="impdescription" type="hidden" value=" "/></div>')
+                            });
+                        }
+        });
+    }
+});
+*/
+$('#importOk').on('click', function() {
+    var groupid = $('#okgroupid').val();
+    console.log(groupid);
+    var albumid = $('#okalbumid').val();
+    $.ajax({
+                        type: 'GET',
+                        url: "/import-okalbum?groupid="+groupid+"&albumid="+albumid,
+                        data: {groupid:groupid},
+                        success: function(data) {
+                            var okresponse = data;
+                            console.log(okresponse);
+                            var okphotos = okresponse.photos;
+                            $('.imported').html('');
+                            
+                            $(okphotos).each(function() {
+                                $('.photos').append('<div class="photo-card"><div class="photo-controls"><div class="check"><i class="fa fa-check" aria-hidden="true"></i></div></div><div class="photo-cover" style="background-image:url(\''+this.pic640x480+'\');background-size:cover;"></div><p class="title">'+this.text+'</p><input type="text" class="form-control price" placeholder="Введите цену" /><input class="bigimg" type="hidden" value="'+this.pic640x480+'"/><input type="hidden" class="thumbsrc" value="'+this.pic128x128+'"/><input class="impdescription" type="hidden" value=" "/></div>')
+                            });
+                            $('.photo-card .check').on('click', function() {
+                                                        if ($(this).hasClass('checked')) {
+                                                            $(this).removeClass('checked');
+                                                            $(this).parent().parent().removeClass('todb');
+                                                        } else {
+                                                            $(this).addClass('checked');
+                                                            $(this).parent().parent().addClass('todb');
+                                                        }
+                                                    })
+                            
+                        }
+    });
+});
+$('.alltodb').on('click', function() {
+    var toImport = [];
+    if ($(this).parent().parent().find('.importerCat').val() == null) {
+        console.log('Wrong Category')
+        $('.importerCat').css('border', '2px solid red');
+        //return false;
+    }
+    $(this).parent().parent().find('.photos .photo-card').each(function() {
+        if ($(this).hasClass('todb')) {
+            var title = $(this).find('.title').text();
+            var previewImg = $(this).find('.thumbsrc').val();
+            var price = $(this).find('.price').val();
+            var worksopId = $('#workId').val();
+            var userId = $('#workUser').val();
+            var category = $(this).parent().parent().find('.importerCat').val();
+            var description = $(this).find('.impdescription').val();
+            var productimage = $(this).find('.bigimg').val();
+            var importer = {
+                title: title,
+                previewImg: previewImg,
+                productimage: productimage,
+                price: price,
+                user: userId,
+                workshop: worksopId,
+                category: category,
+                description: description
+            }
+            toImport.push(importer);
+        }
+    })
+    console.log(toImport);
+    $.ajax({
+                    type: 'POST',
+                    url: "/import",
+                    data: {importers:JSON.stringify(toImport)},
+                    success: function(data) {
+                        console.log(data);
+                        location.reload();
+                    }
+    });
+});
 $(document).on('ready', function() {
     $('img').on('error', function() {
         var broken = $(this).attr('src');
         console.log(broken);
+        $(this).attr('src', "http://lavka.club"+broken);
+        /*
         if (broken[0] == "/") {
-            $(this).attr('src', "/assets/images/tovar.png");
+            $(this).attr('src', "http://lavka.club"+broken);
             /*
             $.ajax({
                     type: 'GET',
@@ -301,13 +531,14 @@ $(document).on('ready', function() {
                         console.log(data);
                     }
             });
-            */
+            
         } else {
-            $(this).attr('src', "/assets/images/tovar.png");
+            $(this).attr('src', "http://lavka.club"+broken);
         }
         $(this).on('error', function() {
-            $(this).attr('src', "/assets/images/tovar.png");
+            $(this).attr('src', "http://lavka.club"+broken);
         });
+        */
         $(this).unbind( "error" );
     });
 });

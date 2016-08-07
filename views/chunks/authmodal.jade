@@ -1,3 +1,39 @@
+#fb-root
+    script.
+          window.fbAsyncInit = function() {
+          FB.init({
+            appId      : '1750660468515600',
+            xfbml      : true,
+            version    : 'v2.5'
+          });
+          $('.fb-auth').on('click', function() {
+            FB.login(function(response) {
+              console.log(response);
+              var userId = response.authResponse.userID;
+              FB.api('/me', 'get', { access_token: response.authResponse.accessToken, fields: 'id,name,email' }, function(response) {
+                    console.log(response);
+                    window.location = "http://lavka.club/fbauth?username="+response.email;
+              });
+            },  {scope: 'email,user_photos', return_scopes: true});
+          });
+          FB.getLoginStatus(function(response) {
+              if (response.status === 'connected') {
+                console.log(response.authResponse.accessToken);
+                FB.api('/me', 'get', { access_token: response.authResponse.accessToken, fields: 'id,name,email' }, function(response) {
+                    console.log(response);
+                });
+              }
+            });
+          };
+          
+          (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/ru_RU/sdk.js#xfbml=1&version=v2.7&appId=1750660468515600";
+          fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+
 //
    Modal
 #authModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
@@ -18,9 +54,12 @@
                         input#loginInputPassword.form-control(type='password', placeholder='Password', name="loginInputPassword")
                     button.btn.btn-default(type='submit') Войти
                     .soc-auth
-                        a.vk-auth(style="", title="Войти через вконтакте" href="https://oauth.vk.com/authorize?client_id=5548425&display=page&redirect_uri=http://lavka.club/vkauth&scope=email&response_type=code&v=5.52")
+                        a.vk-auth(style="", title="Войти через вконтакте" href="https://oauth.vk.com/authorize?client_id=5548425&display=page&redirect_uri=http://lavka.club/vkauth&scope=email,market,groups,photos&response_type=code&v=5.52")
                             i.fa.fa-vk
-                    hr(style="margin-left: -15px;margin-right: -15px;")
+                        a.ok-auth(style="", title="Войти через Одноклассники" href="https://connect.ok.ru/oauth/authorize?client_id=1247716608&scope=VALUABLE_ACCESS,PHOTO_CONTENT,GET_EMAIL&response_type=code&redirect_uri=http://lavka.club/okauth")
+                            i.fa.fa-odnoklassniki
+                        a.fb-auth(title="Войти через Facebook")
+                          i.fa.fa-facebook
                     .form-group
                         a.btn.btn-success(href="/register", style="margin-right:2px;") Регистрация
                         a.btn.btn-warning(href='/password-reset', style="margin-right:2px;") Забыли пароль?
